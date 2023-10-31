@@ -240,6 +240,93 @@ class Move(ManipulateFigure):
         if self.intersects():
             self.get_current_figure().update_shift_x(old_x)
 
+class Pause:
+    def __init__(self, screen):
+        self.font = pygame.font.Font(None, 30)
+        self.font.set_bold(True)
+        self.text = self.font.render("||", True, (0, 0, 0))
+        self.rect = self.text.get_rect()
+        self.rect.x = (screen.get_width() - self.rect.width) - 20
+        self.rect.y = 15
+        self.paused = False
+
+    def toggle(self):
+        self.paused = not self.paused
+
+    def is_paused(self):
+        return self.paused
+
+
+class Game:
+    def __init__(self, screen):
+        self.screen = screen
+        self.figure = MakeFigure(3, 0)
+        self.board = Board()
+        self.move = Move(self.figure, self.board)
+        self.done = False
+        self.level = 1
+        self.paused = False
+        self.pressing_down = False
+
+    def toggle_pause(self):
+        self.paused = not self.paused
+
+    def run(self):
+        fps = 25
+        counter = 0
+
+        while not self.done:
+            counter += 1
+            if counter > 100000:
+                counter = 0
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.done = True
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    if pause_button.rect.collidepoint(event.pos):
+                        self.toggle_pause()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_UP:
+                        if not self.paused:
+                            self.move.rotate()
+                    if event.key == pygame.K_LEFT:
+                        if not self.paused:
+                            self.move.go_side(-1)
+                    if event.key == pygame.K_RIGHT:
+                        if not self.paused:
+                            self.move.go_side(1)
+                    if event.key == pygame.K_DOWN:
+                        self.pressing_down = True
+                    if event.key == pygame.K_SPACE:
+                        self.toggle_pause()
+                if event.type == pygame.KEYUP and event.key == pygame.K_DOWN:
+                    self.pressing_down = False
+
+            if not self.paused:
+                if counter % (fps // 2 // self.level) == 0 or self.pressing_down:
+                    if self.board.get_state() == "Start":
+                        self.move.go_down()
+
+            self.screen.fill(Color.WHITE)
+
+            if not self.paused:
+                self.board.draw_board(self.screen)
+                self.move.draw_figure(self.screen)
+            else:
+                pause_text = pause_button.font.render("Paused", True, Color.BLACK)
+                pause_rect = pause_text.get_rect()
+                pause_rect.center = (self.screen.get_width() // 2, self.screen.get_height() // 2)
+                self.screen.blit(pause_text, pause_rect)
+
+            if self.board.get_state() == "Gameover":
+                self.done = True
+
+            self.screen.blit(pause_button.text, pause_button.rect)
+
+            pygame.display.flip()
+            clock.tick(fps)
+
 
 if __name__ == "__main__":
     pygame.init()
@@ -247,49 +334,8 @@ if __name__ == "__main__":
     clock = pygame.time.Clock()
     screen = pygame.display.set_mode((400, 500))
 
-    fps = 25
-    counter = 0
-    pressing_down = False
-
-    figure = MakeFigure(3, 0)
-    board = Board()
-    move = Move(figure, board)
-    done = False
-    level = 1
-    while not done:
-        counter += 1
-        if counter > 100000:
-            counter = 0
-
-        if counter % (fps // 2 // level) == 0 or pressing_down:
-            if board.get_state() == "Start":
-                move.go_down()  # fix this
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                done = True
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_UP:
-                    move.rotate()
-                if event.key == pygame.K_LEFT:
-                    move.go_side(-1)
-                if event.key == pygame.K_RIGHT:
-                    move.go_side(1)
-                if event.key == pygame.K_SPACE:
-                    move.go_space()
-                if event.key == pygame.K_DOWN:
-                    pressing_down = True
-
-            if event.type == pygame.KEYUP and event.key == pygame.K_DOWN:
-                pressing_down = False
-
-        board.draw_board(screen)
-        move.draw_figure(screen)
-
-        if board.get_state() == "Gameover":
-            done = True
-
-        pygame.display.flip()
-        clock.tick(fps)
+    pause_button = Pause(screen)
+    game = Game(screen)
+    game.run()
 
     pygame.quit()
