@@ -244,17 +244,29 @@ class Pause:
     def __init__(self, screen):
         self.font = pygame.font.Font(None, 30)
         self.font.set_bold(True)
-        self.text = self.font.render("||", True, (0, 0, 0))
-        self.rect = self.text.get_rect()
-        self.rect.x = (screen.get_width() - self.rect.width) - 20
-        self.rect.y = 15
         self.paused = False
+        self.play_button_text = self.font.render(">", True, (0, 0, 0))
+        self.play_button_rect = self.play_button_text.get_rect()
+        self.play_button_rect.center = (screen.get_width() // 2, screen.get_height() // 2)
+        self.pause_button_text = self.font.render("||", True, (0, 0, 0))
+        self.pause_button_rect = self.pause_button_text.get_rect()
+        self.pause_button_rect.x = (screen.get_width() - self.pause_button_rect.width) - 20
+        self.pause_button_rect.y = 15
+        self.current_button_text = self.pause_button_text
+        self.current_button_rect = self.pause_button_rect
 
     def toggle(self):
         self.paused = not self.paused
+        if self.paused:
+            self.current_button_text = self.play_button_text
+        else:
+            self.current_button_text = self.pause_button_text
 
     def is_paused(self):
         return self.paused
+
+    def draw(self, screen):
+        screen.blit(self.current_button_text, self.current_button_rect)
 
 
 class Game:
@@ -270,6 +282,7 @@ class Game:
 
     def toggle_pause(self):
         self.paused = not self.paused
+        pause_button.toggle()
 
     def run(self):
         fps = 25
@@ -284,7 +297,7 @@ class Game:
                 if event.type == pygame.QUIT:
                     self.done = True
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                    if pause_button.rect.collidepoint(event.pos):
+                    if pause_button.current_button_rect.collidepoint(event.pos):
                         self.toggle_pause()
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_UP:
@@ -322,11 +335,10 @@ class Game:
             if self.board.get_state() == "Gameover":
                 self.done = True
 
-            self.screen.blit(pause_button.text, pause_button.rect)
+            pause_button.draw(self.screen)
 
             pygame.display.flip()
             clock.tick(fps)
-
 
 if __name__ == "__main__":
     pygame.init()
