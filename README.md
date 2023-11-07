@@ -1,4 +1,13 @@
-# ase420team
+# Tetris Application
+
+##
+
+
+### Developers:
+* name
+* name
+* name
+* name
 
 ### Credits:
 * `Background Music: `https://freesound.org/people/BloodPixelHero/sounds/648485/
