@@ -1,8 +1,6 @@
-# Name: Julianna Truitt
-# Class: ASE 420
-# Description: Refactoring tetris_ver1.py.
 import random
 import pygame
+import pygame.mixer
 
 
 class Color(object):
@@ -186,7 +184,9 @@ class ManipulateFigure(object):
             (self.get_current_figure().get_rotation() + 1)
             % len(
                 self.get_current_figure().figures[self.get_current_figure().get_type()]))
-        if self.intersects():
+        if not self.intersects():
+            self.play_sound.play_rotate_sound()
+        else:
             self.get_current_figure().update_rotation(old_rotation)
 
     def freeze(self):
@@ -198,6 +198,7 @@ class ManipulateFigure(object):
                         j + self.get_current_figure().get_shift_x()] = self.get_current_figure().get_color()
         self.get_current_board().update_field(new_field)
         self.get_current_board().break_lines()
+        self.play_sound.play_place_sound()
         self._current_figure = MakeFigure(3, 0)
         if self.intersects():
             self.get_current_board().set_state("Gameover")
@@ -220,6 +221,7 @@ class ManipulateFigure(object):
 class Move(ManipulateFigure):
     def __init__(self, current_figure, board):
         super().__init__(current_figure, board)
+        self.play_sound = PlaySound()
 
     def go_space(self):
         while not self.intersects():
@@ -243,9 +245,9 @@ class Move(ManipulateFigure):
 class Pause:
     def __init__(self, screen):
         self.font = pygame.font.Font(None, 30)
-        self.font.set_bold(True)
+        self.font.set_bold(False)
         self.paused = False
-        self.play_button_text = self.font.render(">", True, (0, 0, 0))
+        self.play_button_text = self.font.render(">", True, (0, 0, 0)) #\u25B6
         self.play_button_rect = self.play_button_text.get_rect()
         self.play_button_rect.center = (screen.get_width() // 2, screen.get_height() // 2)
         self.pause_button_text = self.font.render("||", True, (0, 0, 0))
@@ -254,12 +256,15 @@ class Pause:
         self.pause_button_rect.y = 15
         self.current_button_text = self.pause_button_text
         self.current_button_rect = self.pause_button_rect
+        self.play_sound = PlaySound()
 
     def toggle(self):
         self.paused = not self.paused
         if self.paused:
+            self.play_sound.play_pause_sound()
             self.current_button_text = self.play_button_text
         else:
+            self.play_sound.play_resume_sound()
             self.current_button_text = self.pause_button_text
 
     def is_paused(self):
@@ -267,6 +272,31 @@ class Pause:
 
     def draw(self, screen):
         screen.blit(self.current_button_text, self.current_button_rect)
+
+class PlaySound:
+    def __init__(self):
+        pygame.mixer.init()
+        self.rotate_sound = pygame.mixer.Sound("util/rotate_sound.wav")
+        self.place_sound = pygame.mixer.Sound("util/place_sound.wav")
+        self.pause_sound = pygame.mixer.Sound("util/pause_sound.wav")
+        self.resume_sound = pygame.mixer.Sound("util/resume_sound.wav")
+        self.gameover_sound = pygame.mixer.Sound("util/gameover_sound.wav")
+
+
+    def play_rotate_sound(self):
+        self.rotate_sound.play()
+
+    def play_place_sound(self):
+        self.place_sound.play()
+
+    def play_pause_sound(self):
+        self.pause_sound.play()
+
+    def play_resume_sound(self):
+        self.resume_sound.play()
+
+    def play_gameover_sound(self):
+        self.gameover_sound.play()
 
 
 class Game:
@@ -279,6 +309,7 @@ class Game:
         self.level = 1
         self.paused = False
         self.pressing_down = False
+        self.play_sound = PlaySound()
 
     def toggle_pause(self):
         self.paused = not self.paused
@@ -333,6 +364,7 @@ class Game:
                 self.screen.blit(pause_text, pause_rect)
 
             if self.board.get_state() == "Gameover":
+                self.play_sound.play_gameover_sound()
                 self.done = True
 
             pause_button.draw(self.screen)
