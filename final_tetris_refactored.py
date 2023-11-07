@@ -233,6 +233,7 @@ class ManipulateFigure(object):
         else:
             self.get_current_figure().update_rotation(old_rotation)
     def freeze(self):
+        self.play_sound.play_place_sound()
         new_field = self.get_current_board().get_current_field()
         for i in range(self.get_current_figure().get_blocks_per_figure()):
             for j in range(self.get_current_figure().get_blocks_per_figure()):
@@ -241,6 +242,7 @@ class ManipulateFigure(object):
                         j + self.get_current_figure().get_shift_x()] = self.get_current_figure().get_color()
         self.get_current_board().update_field(new_field)
         self.get_current_board().break_lines()
+        #self.play_sound.play_place_sound()
         self._current_figure = self.get_current_figure().get_new_figure()
         if self.intersects():
             self.get_current_board().set_state("Gameover")
@@ -260,6 +262,7 @@ class ManipulateFigure(object):
 class Move(ManipulateFigure):
     def __init__(self, current_figure, board):
         super().__init__(current_figure, board)
+        self.play_sound = PlaySound()
     def go_space(self):
         while not self.intersects():
             self.get_current_figure().update_shift_y(self.get_current_figure().get_shift_y() + 1)
@@ -276,6 +279,8 @@ class Move(ManipulateFigure):
         self.get_current_figure().update_shift_x(self.get_current_figure().get_shift_x() + dx)
         if self.intersects():
             self.get_current_figure().update_shift_x(old_x)
+        else:
+            self.play_sound.play_side_sound()
 
 
 class MakePopUpBox(object):
@@ -359,29 +364,52 @@ class Pause:
 
 class PlaySound:
     def __init__(self):
-        pygame.mixer.init()
-        self.rotate_sound = pygame.mixer.Sound("util/rotate_sound.wav")
-        self.place_sound = pygame.mixer.Sound("util/place_sound.wav")
-        self.pause_sound = pygame.mixer.Sound("util/pause_sound.wav")
-        self.resume_sound = pygame.mixer.Sound("util/resume_sound.wav")
-        self.gameover_sound = pygame.mixer.Sound("util/gameover_sound.wav")
+        pygame.mixer.init(44100, -16, 2, 2048)
+        self.background_channel = pygame.mixer.Channel(1) 
+        self.movement_channel = pygame.mixer.Channel(2)  
+        self.quiet_sound = 0.2
+        self.background_sound = pygame.mixer.Sound("util/background_sound4.wav")
+        self.background_playing = False
 
+
+    def play_background_sound(self):
+        if not self.background_playing:
+            self.background_sound.set_volume(self.quiet_sound)
+            self.background_channel.play(self.background_sound, loops=-1)
+            self.background_playing = True
+
+    def stop_background_sound(self):
+        if self.background_playing:
+            self.background_channel.stop()
+            self.background_playing = False
+
+    def play_side_sound(self):
+        side_sound = pygame.mixer.Sound("util/side_sound.wav")
+        side_sound.set_volume(self.quiet_sound)
+        self.movement_channel.play(side_sound)
 
     def play_rotate_sound(self):
-        self.rotate_sound.play()
-
+        rotate_sound = rotate_sound = pygame.mixer.Sound("util/rotate_sound.wav")
+        self.movement_channel.play(rotate_sound)
+        
     def play_place_sound(self):
-        self.place_sound.play()
+        place_sound = place_sound = pygame.mixer.Sound("util/place_sound5.wav")
+        place_sound.set_volume(self.quiet_sound)
+        self.movement_channel.play(place_sound)
 
     def play_pause_sound(self):
-        self.pause_sound.play()
+        pause_sound = pygame.mixer.Sound("util/pause_sound.wav")
+        self.movement_channel.play(pause_sound)
 
     def play_resume_sound(self):
-        self.resume_sound.play()
+        resume_sound = pygame.mixer.Sound("util/resume_sound.wav")
+        resume_sound.set_volume(self.quiet_sound)
+        self.movement_channel.play(resume_sound)
 
     def play_gameover_sound(self):
-        self.gameover_sound.play()
-
+        gameover_sound = pygame.mixer.Sound("util/gameover_sound.wav")
+        gameover_sound.set_volume(self.quiet_sound)
+        self.movement_channel.play(gameover_sound)
 
 class Game:
     def __init__(self, screen):
@@ -397,11 +425,17 @@ class Game:
 
     def toggle_pause(self):
         self.paused = not self.paused
+        if self.paused:
+            self.play_sound.stop_background_sound()
+        else:
+            self.play_sound.play_background_sound()
         pause_button.toggle()
 
     def run(self):
         fps = 25
         counter = 0
+
+        self.play_sound.play_background_sound()
 
         while not self.done:
             counter += 1
@@ -455,6 +489,7 @@ class Game:
 
             pygame.display.flip()
             clock.tick(fps)
+            
     def get_user_figures_pick(self):
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
