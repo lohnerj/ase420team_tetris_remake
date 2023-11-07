@@ -368,7 +368,7 @@ class PlaySound:
         self.background_channel = pygame.mixer.Channel(1) 
         self.movement_channel = pygame.mixer.Channel(2)  
         self.quiet_sound = 0.2
-        self.background_sound = pygame.mixer.Sound("util/background_sound4.wav")
+        self.background_sound = pygame.mixer.Sound("util/background_sound.wav")
         self.background_playing = False
 
 
@@ -393,7 +393,7 @@ class PlaySound:
         self.movement_channel.play(rotate_sound)
         
     def play_place_sound(self):
-        place_sound = place_sound = pygame.mixer.Sound("util/place_sound5.wav")
+        place_sound = place_sound = pygame.mixer.Sound("util/place_sound.wav")
         place_sound.set_volume(self.quiet_sound)
         self.movement_channel.play(place_sound)
 
