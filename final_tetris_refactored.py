@@ -246,7 +246,6 @@ class ManipulateFigure(object):
                         j + self.get_current_figure().get_shift_x()] = self.get_current_figure().get_color()
         self.get_current_board().update_field(new_field)
         self.get_current_board().break_lines()
-        #self.play_sound.play_place_sound()
         self._current_figure = self.get_current_figure().get_new_figure()
         if self.intersects():
             self.get_current_board().set_state("Gameover")
