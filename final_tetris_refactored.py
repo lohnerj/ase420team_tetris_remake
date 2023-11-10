@@ -160,6 +160,8 @@ class MakeSixBlockFigure(MakeFigure):
 class Board(StartingValues):
     def __init__(self):
         super().__init__()
+        self.play_sound = PlaySound()
+        #self.play_sound = play_sound
         self._field = []
         for i in range(self.get_height()):
             new_line = [0] * self.get_width()
@@ -191,6 +193,8 @@ class Board(StartingValues):
                     if current_field[i][j] == 0:
                         zeros += 1
                 if zeros == 0:
+                    self.play_sound.play_tetris_sound()
+                    #self.play_sound.play_tetris_sound()
                     delete_row(current_field, width, i)
         def delete_row(current_field, width, current_row):
             old_field = current_field
@@ -366,7 +370,8 @@ class PlaySound:
     def __init__(self):
         pygame.mixer.init(44100, -16, 2, 2048)
         self.background_channel = pygame.mixer.Channel(1) 
-        self.movement_channel = pygame.mixer.Channel(2)  
+        self.movement_channel = pygame.mixer.Channel(2) 
+        self.tetris_channel = pygame.mixer.Channel(3) 
         self.quiet_sound = 0.2
         self.background_sound = pygame.mixer.Sound("util/background_sound.wav")
         self.background_playing = False
@@ -374,7 +379,7 @@ class PlaySound:
 
     def play_background_sound(self):
         if not self.background_playing:
-            self.background_sound.set_volume(self.quiet_sound)
+            self.background_sound.set_volume(0.5)
             self.background_channel.play(self.background_sound, loops=-1)
             self.background_playing = True
 
@@ -405,6 +410,11 @@ class PlaySound:
         resume_sound = pygame.mixer.Sound("util/resume_sound.wav")
         resume_sound.set_volume(self.quiet_sound)
         self.movement_channel.play(resume_sound)
+
+    def play_tetris_sound(self):
+        tetris_sound = pygame.mixer.Sound("util/tetris_sound.wav")
+        tetris_sound.set_volume(0.5)
+        self.tetris_channel.play(tetris_sound)
 
     def play_gameover_sound(self):
         gameover_sound = pygame.mixer.Sound("util/gameover_sound.wav")
