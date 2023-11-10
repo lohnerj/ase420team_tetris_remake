@@ -421,6 +421,17 @@ class PlaySound:
         gameover_sound.set_volume(self.quiet_sound)
         self.movement_channel.play(gameover_sound)
 
+class Gameover:
+    def __init__(self, screen):
+        self.font = pygame.font.Font(None, 36)
+        self.text = self.font.render("Game Over", True, (255, 0, 0))  # Define color directly as RGB tuple
+        self.text_rect = self.text.get_rect()
+        self.text_rect.center = (screen.get_width() // 2, screen.get_height() // 2)
+
+    def draw(self, screen):
+        screen.blit(self.text, self.text_rect)
+
+
 class Game:
     def __init__(self, screen):
         self.screen = screen
@@ -432,6 +443,8 @@ class Game:
         self.paused = False
         self.pressing_down = False
         self.play_sound = PlaySound()
+        self.game_over = False
+        self.game_over_screen = Gameover(screen)
 
     def toggle_pause(self):
         self.paused = not self.paused
@@ -444,6 +457,7 @@ class Game:
     def run(self):
         fps = 25
         counter = 0
+        self.game_over = False
 
         self.play_sound.play_background_sound()
 
@@ -493,6 +507,13 @@ class Game:
 
             if self.board.get_state() == "Gameover":
                 self.play_sound.play_gameover_sound()
+                self.game_over = True
+                #self.done = True
+
+            if self.game_over:
+                self.game_over_screen.draw(screen)
+                pygame.display.flip()
+                pygame.time.wait(700)
                 self.done = True
 
             pause_button.draw(self.screen)
