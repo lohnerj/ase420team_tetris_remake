@@ -424,11 +424,12 @@ class PlaySound:
 class Gameover:
     def __init__(self, screen):
         self.font = pygame.font.Font(None, 36)
-        self.text = self.font.render("Game Over", True, (255, 0, 0))  # Define color directly as RGB tuple
+        self.text = self.font.render("Game Over", True, (255, 0, 0))
         self.text_rect = self.text.get_rect()
         self.text_rect.center = (screen.get_width() // 2, screen.get_height() // 2)
 
     def draw(self, screen):
+        screen.fill((255, 255, 255))
         screen.blit(self.text, self.text_rect)
 
 
