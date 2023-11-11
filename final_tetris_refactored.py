@@ -508,7 +508,6 @@ class Game:
             if self.board.get_state() == "Gameover":
                 self.play_sound.play_gameover_sound()
                 self.game_over = True
-                #self.done = True
 
             if self.game_over:
                 self.game_over_screen.draw(screen)
