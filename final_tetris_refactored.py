@@ -1,20 +1,118 @@
 import random
 import pygame
-from tkinter import *  # for pop up box
 
 class Color(object):
-    colors = (
-        (0, 0, 0),  # We don't use this
-        (120, 37, 179),
-        (100, 179, 179),
-        (80, 34, 22),
-        (80, 134, 22),
-        (180, 34, 22),
-        (180, 34, 122),
-    )
     BLACK = (0, 0, 0)
     WHITE = (255, 255, 255)
     GRAY = (128, 128, 128)
+    def __init__(self):
+        self._PURPLE = (120, 37, 179)
+        self._LIGHT_BLUE = (100, 179, 179)
+        self._BROWN = (80, 34, 22)
+        self._LIGHT_GREEN = (80, 134, 22)
+        self._RED = (180, 34, 22)
+        self._PINKISH_PURPLE = (180, 34, 122)
+        self._ORANGE = (255, 97, 3)
+        self._YELLOW = (255, 255, 0)
+        self._GREEN = (0,128,0)
+        self._BLUE = (0, 0, 255) 
+        self._RUST_ORANGE = (205, 55, 0)
+        self._MAROON = (128, 0, 0)
+        self._GOLDEN_YELLOW = (205, 173, 0)
+        self._BURNT_SIENNA = (138, 54, 15)
+        self._OLIVE_GREEN = (107, 142, 35)
+        self._DARK_BROWN = (94, 38, 18)
+        self._LIGHT_PINK = (255, 182, 193)
+        self._SKY_BLUE = (135, 206, 235)
+        self._MINT = (189, 252, 201)
+        self._LAVENDER = (205, 193, 197)
+        self._PALE_TURQUOISE = (102, 139, 139)
+        self._PALE_GOLDENROD = (238, 232, 170)
+        self._NEON_GREEN = (57, 255, 20)
+        self._HOT_PINK = (255,105,180)
+        self._NEON_BLUE = (31, 81, 255)
+        self._NEON_ORANGE = (255, 95, 31)
+        self._NEON_YELLOW = ((224,231,34))
+        self._TURQOISE = (0,245,255)
+
+    def get_purple(self): return self._PURPLE
+    def get_light_blue(self): return self._LIGHT_BLUE
+    def get_brown(self): return self._BROWN
+    def get_light_green(self): return self._LIGHT_GREEN
+    def get_red(self): return self._RED
+    def get_pinkish_purple(self): return self._PINKISH_PURPLE
+    def get_orange(self): return self._ORANGE
+    def get_yellow(self): return self._YELLOW
+    def get_green(self): return self._GREEN
+    def get_blue(self): return self._BLUE
+    def get_rust_orange(self): return self._RUST_ORANGE
+    def get_maroon(self): return self._MAROON
+    def get_golden_yellow(self): return self._GOLDEN_YELLOW
+    def get_burnt_sienna(self): return self._BURNT_SIENNA
+    def get_olive_green(self): return self._OLIVE_GREEN
+    def get_dark_brown(self): return self._DARK_BROWN
+    def get_light_pink(self): return self._LIGHT_PINK
+    def get_sky_blue(self): return self._SKY_BLUE
+    def get_mint(self): return self._MINT
+    def get_lavender(self): return self._LAVENDER
+    def get_pale_turquoise(self): return self._PALE_TURQUOISE
+    def get_pale_goldenrod(self): return self._PALE_GOLDENROD
+    def get_neon_green(self): return self._NEON_GREEN
+    def get_hot_pink(self): return self._HOT_PINK
+    def get_neon_blue(self): return self._NEON_BLUE
+    def get_neon_orange(self): return self._NEON_ORANGE
+    def get_neon_yellow(self): return self._NEON_ORANGE
+    def get_turqoise(self): return self._TURQOISE
+
+class TraditionalTetrisColors(object):
+    def __init__(self):
+        self._colors = (Color().BLACK,
+                        Color().get_purple(), 
+                        Color().get_light_blue(),
+                        Color().get_brown(),
+                        Color().get_light_green(),
+                        Color().get_red(),
+                        Color().get_pinkish_purple())
+    def getColorScheme(self):
+        return self._colors
+    
+class RainbowTetrisColors(object):
+    def __init__(self):
+        self._colors = (Color().BLACK,
+                        Color().get_red(),
+                        Color().get_orange(),
+                        Color().get_yellow(),
+                        Color().get_green(),
+                        Color().get_blue(),
+                        Color().get_purple())
+    def getColorScheme(self):
+        return self._colors
+    
+class AutumnTetrisColors(object):
+    def __init__(self):
+        self._colors = (Color().BLACK,
+                        Color().get_rust_orange(),
+                        Color().get_maroon(),
+                        Color().get_golden_yellow(),
+                        Color().get_burnt_sienna(),
+                        Color().get_olive_green(),
+                        Color().get_dark_brown())
+    def getColorScheme(self):
+        return self._colors
+    
+class BrightTetrisColors(object):
+    def __init__(self):
+        self._colors = (Color().BLACK,
+                        Color().get_neon_green(),
+                        Color().get_hot_pink(),
+                        Color().get_neon_blue(),
+                        Color().get_neon_orange(),
+                        Color().get_neon_yellow(),
+                        Color().get_turqoise())
+    def getColorScheme(self):
+        return self._colors
+
+
 class StartingValues(object):
     def __init__(self):
         self._startX = 100
@@ -37,10 +135,13 @@ class StartingValues(object):
         return self._width
     def set_state(self, state):
         self._state = state
+        
+
 class MakeFigure(StartingValues):
-    def __init__(self, shift_x, shift_y):
+    def __init__(self, shift_x, shift_y, color_scheme):
         super().__init__()
-        self._color = random.randint(1, len(Color.colors) - 1)
+        self._exact_color = random.randint(1, len(color_scheme.getColorScheme()) - 1) #!!
+        self._color_scheme = color_scheme
         self._rotation = 0
         self._shift_x = shift_x
         self._shift_y = shift_y
@@ -63,8 +164,11 @@ class MakeFigure(StartingValues):
     def get_rotation(self):
         return self._rotation
 
-    def get_color(self):
-        return self._color
+    def get_exact_color(self):
+        return self._exact_color
+        
+    def get_color_scheme_name(self): #!!!
+        return self._color_scheme
 
 
 class MakeFourBlockFigure(MakeFigure):
@@ -78,8 +182,8 @@ class MakeFourBlockFigure(MakeFigure):
         [[1, 2, 5, 6]],
     )
 
-    def __init__(self, shift_x, shift_y):
-        super().__init__(shift_x, shift_y)
+    def __init__(self, shift_x, shift_y, color_scheme):
+        super().__init__(shift_x, shift_y, color_scheme)
         self._type = random.randint(0, len(self.figures) - 1)
         self._blocksPerFigure = 4
 
@@ -92,8 +196,8 @@ class MakeFourBlockFigure(MakeFigure):
     def get_figure_shape(self):
         return self.figures[self.get_type()][self.get_rotation()]
 
-    def get_new_figure(self):
-        return MakeFourBlockFigure(3, 0)
+    def get_new_figure(self, color_scheme):
+        return MakeFourBlockFigure(3, 0, color_scheme) #!!!
 
 
 class MakeFiveBlockFigure(MakeFigure):
@@ -107,8 +211,8 @@ class MakeFiveBlockFigure(MakeFigure):
         [[6, 7, 8, 9, 12], [17, 12, 7, 2, 6], [5, 6, 7, 8, 2], [2, 7, 12, 17, 13]],
     )
 
-    def __init__(self, shift_x, shift_y):
-        super().__init__(shift_x, shift_y)
+    def __init__(self, shift_x, shift_y, color_scheme):
+        super().__init__(shift_x, shift_y, color_scheme)
         self._type = random.randint(0, len(self.figures) - 1)
         self._blocksPerFigure = 5
 
@@ -121,8 +225,8 @@ class MakeFiveBlockFigure(MakeFigure):
     def get_figure_shape(self):
         return self.figures[self.get_type()][self.get_rotation()]
 
-    def get_new_figure(self):
-        return MakeFiveBlockFigure(3, 0)
+    def get_new_figure(self, color_scheme):
+        return MakeFiveBlockFigure(3, 0, color_scheme)
 
 class MakeSixBlockFigure(MakeFigure):
     figures = (
@@ -139,8 +243,8 @@ class MakeSixBlockFigure(MakeFigure):
         [[13,14,15,16,21,27], [9,15,21,27,20,19], [23,22,21,20,15,9], [27,21,15,9,16,17]],
     )
 
-    def __init__(self, shift_x, shift_y):
-        super().__init__(shift_x, shift_y)
+    def __init__(self, shift_x, shift_y, color_scheme):
+        super().__init__(shift_x, shift_y, color_scheme)
         self._type = random.randint(0, len(self.figures) - 1)
         self._blocksPerFigure = 6
 
@@ -153,14 +257,15 @@ class MakeSixBlockFigure(MakeFigure):
     def get_figure_shape(self):
         return self.figures[self.get_type()][self.get_rotation()]
 
-    def get_new_figure(self):
-        return MakeSixBlockFigure(3, 0)
+    def get_new_figure(self, color_scheme):
+        return MakeSixBlockFigure(3, 0, color_scheme)
 
 
 class Board(StartingValues):
-    def __init__(self):
+    def __init__(self, color_scheme):
         super().__init__()
         self._field = []
+        self._color_scheme = color_scheme.getColorScheme()
         for i in range(self.get_height()):
             new_line = [0] * self.get_width()
             self.add_to_field(new_line)
@@ -170,8 +275,8 @@ class Board(StartingValues):
         self._field.append(new_line)
     def update_field(self, field):
         self._field = field
-    def draw_board(self, screen):
-        screen.fill(Color().WHITE)
+    def draw_board(self, screen, color):
+        screen.fill(color)
         for i in range(self.get_height()):
             for j in range(self.get_width()):
                 pygame.draw.rect(screen, Color().GRAY, [self.get_startX() + self.get_blockSize() * j,
@@ -179,7 +284,7 @@ class Board(StartingValues):
                                                         self.get_blockSize(),
                                                         self.get_blockSize()], 1)
                 if self.get_current_field()[i][j] > 0:
-                    pygame.draw.rect(screen, Color().colors[self.get_current_field()[i][j]],
+                    pygame.draw.rect(screen, self._color_scheme[self.get_current_field()[i][j]],
                                      [self.get_startX() + self.get_blockSize() * j + 1,
                                       self.get_startY() + self.get_blockSize() * i + 1,
                                       self.get_blockSize() - 2, self.get_blockSize() - 1])
@@ -236,10 +341,10 @@ class ManipulateFigure(object):
             for j in range(self.get_current_figure().get_blocks_per_figure()):
                 if i * self.get_current_figure().get_blocks_per_figure() + j in self.get_current_figure().get_figure_shape():
                     new_field[i + self.get_current_figure().get_shift_y()][
-                        j + self.get_current_figure().get_shift_x()] = self.get_current_figure().get_color()
+                        j + self.get_current_figure().get_shift_x()] = self.get_current_figure().get_exact_color()
         self.get_current_board().update_field(new_field)
         self.get_current_board().break_lines()
-        self._current_figure = self.get_current_figure().get_new_figure()
+        self._current_figure = self.get_current_figure().get_new_figure(self._current_figure.get_color_scheme_name()) 
         if self.intersects():
             self.get_current_board().set_state("Gameover")
     def draw_figure(self, screen):
@@ -247,7 +352,7 @@ class ManipulateFigure(object):
             for j in range(self.get_current_figure().get_blocks_per_figure()):
                 p = i * self.get_current_figure().get_blocks_per_figure() + j
                 if p in self.get_current_figure().get_figure_shape():
-                    pygame.draw.rect(screen, Color().colors[self.get_current_figure().get_color()],
+                    pygame.draw.rect(screen, self.get_current_figure().get_color_scheme_name().getColorScheme()[self.get_current_figure().get_exact_color()],
                                      [
                                          self.get_current_figure().get_startX() + self.get_current_figure().get_blockSize() *
                                          (j + self.get_current_figure().get_shift_x()) + 1,
@@ -276,53 +381,6 @@ class Move(ManipulateFigure):
             self.get_current_figure().update_shift_x(old_x)
 
 
-class MakePopUpBox(object):
-    def __init__(self):
-        self._figure = 0
-
-    def set_figure_size_selected(self, figure_size_selected):
-        self._figure = figure_size_selected
-
-    def get_figure_size_selected(self):
-        return self._figure
-
-    def get_which_figure_size_user_chooses(self):
-        root = Tk()
-        root.title("Pick which figures you want to play with")
-        width = 400
-        height = 500
-
-        screen_width = root.winfo_screenwidth()
-        screen_height = root.winfo_screenheight()
-
-        x_position = (screen_width / 2) - (width / 2)
-        y_position = (screen_height / 2) - (height / 2)
-
-        root.geometry('%dx%d+%d+%d' % (width, height, x_position, y_position))
-
-        def four_figure_clicked():
-            self.set_figure_size_selected(MakeFourBlockFigure(3, 0))
-            root.destroy()
-
-        def five_figure_clicked():
-            self.set_figure_size_selected(MakeFiveBlockFigure(3, 0))
-            root.destroy()
-
-        def six_figure_clicked():
-            self.set_figure_size_selected(MakeSixBlockFigure(3, 0))
-            root.destroy()
-
-        buttonFourBlockFigure = Button(root, text="4 block figures", padx=40, pady=20, command=four_figure_clicked, bg="pink")
-        buttonFiveBlockFigure = Button(root, text="5 block figures", padx=40, pady=20, command=five_figure_clicked, bg="pink")
-        buttonSixBlockFigure = Button(root, text="6 block figures", padx=40, pady=20, command=six_figure_clicked, bg="pink")
-        label = Label(root, text="Select which figures you want to play with!", padx=30, pady=20)
-        label.pack()
-        buttonFourBlockFigure.pack()
-        buttonFiveBlockFigure.pack()
-        buttonSixBlockFigure.pack()
-        root.mainloop()
-        return self.get_figure_size_selected()
-
 
 class Pause:
     def __init__(self, screen):
@@ -339,18 +397,200 @@ class Pause:
 
     def is_paused(self):
         return self.paused
+    
+class StartMenu(object):
+    def __init__(self):
+        self.width = 400
+        self.height = 500
+        self.screen = pygame.display.set_mode((self.width, self.height))
+        self.users_selected_color_scheme = 0
+        self.users_selected_figures = 0
+        self.background_color = 0
+        self.font = pygame.font.Font('freesansbold.ttf', 26)
+
+    def set_users_choice_color_scheme(self, color_scheme_selected):
+        self.users_selected_color_scheme = color_scheme_selected
+    def get_users_choice_color_scheme(self):
+        return self.users_selected_color_scheme
+    def set_users_choice_figures(self, figure_choice):
+        self.users_selected_figures = figure_choice
+    def get_users_choice_figures(self):
+        return self.users_selected_figures
+    def set_background_color(self, background_color):
+        self.background_color = background_color
+    def get_background_color(self):
+        return self.background_color
+    
+
+    def display_color_schemes(self):
+        classic_color_button_img = pygame.image.load("button_images/button_classic-colors.png").convert_alpha()
+        rainbow_color_button_img = pygame.image.load("button_images/button_rainbow-colors.png").convert_alpha()
+        autumn_color_button_img = pygame.image.load("button_images/button_autumn-colors.png").convert_alpha()
+        bright_color_button_img = pygame.image.load("button_images/button_bright-colors.png").convert_alpha()
+        
+        classic_color_button = Button(10, 10, classic_color_button_img, .7)
+        rainbow_color_button = Button(10, 75, rainbow_color_button_img, .7)
+        autumn_color_button = Button(200, 10, autumn_color_button_img, .7)
+        bright_color_button = Button(215, 75, bright_color_button_img, .7)
+
+        text = self.font.render('Pick A Color Scheme', True, Color().BLACK)
+        textRect = text.get_rect(topleft=(60,200))
+
+        run = True
+        while run:
+            self.screen.fill((202, 228, 241))
+            self.screen.blit(text, textRect)
+            if classic_color_button.draw():
+                self.set_users_choice_color_scheme(TraditionalTetrisColors())
+                run = False
+            elif rainbow_color_button.draw():
+                self.set_users_choice_color_scheme(RainbowTetrisColors())
+                run = False
+            elif autumn_color_button.draw():
+                self.set_users_choice_color_scheme(AutumnTetrisColors())
+                run = False
+            elif bright_color_button.draw():
+                self.set_users_choice_color_scheme(BrightTetrisColors())
+                run = False
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    run = False
+
+            pygame.display.flip()
+            
+        pygame.display.update()
+    
+
+    def display_figure_selection(self):
+        self.display_color_schemes()
+
+        four_figure_img = pygame.image.load("button_images/button_4_block-figures.png").convert_alpha()
+        five_figure_img = pygame.image.load("button_images/button_5_block-figures.png").convert_alpha()
+        six_figure_img = pygame.image.load("button_images/button_6_block-figures.png").convert_alpha()
+        
+        four_figure_button = Button(100, 210, four_figure_img, .8)
+        five_figure_button = Button(100, 285, five_figure_img, .8)
+        six_figure_button = Button(100, 360, six_figure_img, .8)
+
+        text1 = self.font.render('Which Tetromino Figures', True, Color().BLACK)
+        text2 = self.font.render('Do You Want To Play With?', True, Color().BLACK)
+        textRect1 = text1.get_rect(topleft=(50,100))
+        textRect2 = text2.get_rect(topleft=(50,130))
+
+        run = True
+        while run:
+
+            self.screen.fill((202, 228, 241))
+            self.screen.blit(text1, textRect1)
+            self.screen.blit(text2, textRect2)
+            if four_figure_button.draw():
+                self.set_users_choice_figures(MakeFourBlockFigure(3,0,self.get_users_choice_color_scheme()))
+                run = False
+            elif five_figure_button.draw():
+                self.set_users_choice_figures(MakeFiveBlockFigure(3, 0, self.get_users_choice_color_scheme()))
+                run = False
+            elif six_figure_button.draw():
+                self.set_users_choice_figures(MakeSixBlockFigure(3, 0, self.get_users_choice_color_scheme()))
+                run = False
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    run = False
+
+            pygame.display.flip()
+
+        pygame.display.update()
+        return self.get_users_choice_figures()
+    
+    def display_background_color_options(self):
+        light_pink_button_option_img = pygame.image.load("button_images/button_light-pink.png").convert_alpha()
+        sky_blue_button_option_img = pygame.image.load("button_images/button_sky-blue.png").convert_alpha()
+        mint_button_option_img = pygame.image.load("button_images/button_mint.png").convert_alpha()
+        lavender_button_option_img = pygame.image.load("button_images/button_lavender.png").convert_alpha()
+        white_button_option_img = pygame.image.load("button_images/button_white.png").convert_alpha()
+        black_button_option_img = pygame.image.load("button_images/button_black.png").convert_alpha()
+
+        light_pink_background = Button(10, 0, light_pink_button_option_img, .8)
+        sky_blue_background = Button(10, 75, sky_blue_button_option_img, .8)
+        mint_background = Button(10, 150, mint_button_option_img, .8)
+        lavender_background = Button(200, 0, lavender_button_option_img, .8)
+        white_background = Button(200, 75, white_button_option_img, .8)
+        black_background = Button(200, 150, black_button_option_img, .8)
+
+        text = self.font.render('Pick A Background Color', True, Color().BLACK)
+        textRect = text.get_rect(topleft=(50,250))
+
+        run = True
+        while run:
+
+            self.screen.fill((202,228,241))
+            self.screen.blit(text, textRect)
+            if light_pink_background.draw():
+                self.set_background_color(Color().get_light_pink())
+                run = False
+
+            elif sky_blue_background.draw():
+                self.set_background_color(Color().get_sky_blue())
+                run = False
+
+            elif mint_background.draw():
+                self.set_background_color(Color().get_mint())
+                run = False
+                    
+            elif lavender_background.draw():
+                self.set_background_color(Color().get_lavender())
+                run = False
+
+            elif white_background.draw():
+                self.set_background_color(Color().WHITE)
+                run = False
+
+            elif black_background.draw():
+                self.set_background_color(Color().BLACK)
+                run = False
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    run = False
+
+            pygame.display.flip()
+        pygame.display.update()
+        return self.get_background_color()
+    
+    
+class Button(object):
+    def __init__(self, x, y, image, scale):
+        width = image.get_width()
+        height = image.get_height()
+        self.image = pygame.transform.scale(image, (int(width * scale), int(height * scale)))
+        self.rect = self.image.get_rect(topleft=(x, y))
+        self.clicked = False
+
+    def draw(self):
+        action = False
+        pos = pygame.mouse.get_pos()
+        
+        if self.rect.collidepoint(pos):
+            if pygame.mouse.get_pressed()[0] == 1 and self.clicked == False:
+                self.clicked = True
+                action = True
+                print('Clicked!!')
+            
+        screen.blit(self.image, self.rect)
+        return action
 
 
 class Game:
     def __init__(self, screen):
+        startmenu = StartMenu()
         self.screen = screen
-        self.figure = MakePopUpBox().get_which_figure_size_user_chooses()
-        self.board = Board()
+        self.figure = startmenu.display_figure_selection()
+        self.board = Board(startmenu.get_users_choice_color_scheme())
         self.move = Move(self.figure, self.board)
         self.done = False
         self.level = 1
         self.paused = False
         self.pressing_down = False
+        self.background_color = startmenu.display_background_color_options()
 
     def toggle_pause(self):
         self.paused = not self.paused
@@ -392,10 +632,10 @@ class Game:
                     if self.board.get_state() == "Start":
                         self.move.go_down()
 
-            self.screen.fill(Color.WHITE)
+            self.screen.fill(Color().WHITE)
 
             if not self.paused:
-                self.board.draw_board(self.screen)
+                self.board.draw_board(self.screen, self.background_color)
                 self.move.draw_figure(self.screen)
             else:
                 pause_text = pause_button.font.render("Paused", True, Color.BLACK)
@@ -410,11 +650,6 @@ class Game:
 
             pygame.display.flip()
             clock.tick(fps)
-    def get_user_figures_pick(self):
-        for event in pygame.event.get():
-            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                if pause_button.rect.collidepoint(event.pos):
-                    self.toggle_pause()
 
 
 if __name__ == "__main__":
