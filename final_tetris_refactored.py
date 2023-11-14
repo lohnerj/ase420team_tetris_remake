@@ -335,10 +335,10 @@ class MakePopUpBox(object):
 
 class Pause:
     def __init__(self, screen):
-        self.font = pygame.font.Font(None, 30)
+        self.font = pygame.font.Font('util/fonts/seguisym.ttf', 25)
         self.font.set_bold(False)
         self.paused = False
-        self.play_button_text = self.font.render(">", True, (0, 0, 0)) #\u25B6
+        self.play_button_text = self.font.render("\u25B6", True, (0, 0, 0))
         self.play_button_rect = self.play_button_text.get_rect()
         self.play_button_rect.center = (screen.get_width() // 2, screen.get_height() // 2)
         self.pause_button_text = self.font.render("||", True, (0, 0, 0))
@@ -445,8 +445,8 @@ class Settings:
 class SettingsButton:
     def __init__(self, screen):
         self.screen = screen
-        self.font = pygame.font.Font(None, 36)
-        self.text = self.font.render("Settings", True, (255, 255, 255))
+        self.font = pygame.font.Font('util/fonts/seguisym.ttf', 25)
+        self.text = self.font.render("\u2699", True, (0, 0, 0))
         self.rect = self.text.get_rect(topleft=(10, 10))
 
     def draw(self):
