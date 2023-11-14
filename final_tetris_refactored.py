@@ -371,7 +371,7 @@ class PlaySound:
         self.movement_channel = pygame.mixer.Channel(2) 
         self.tetris_channel = pygame.mixer.Channel(3) 
         self.quiet_sound = 0.2
-        self.background_sound = pygame.mixer.Sound("util/background_sound.wav")
+        self.background_sound = pygame.mixer.Sound("util/sounds/background_sound.wav")
         self.background_playing = False
 
 
@@ -387,39 +387,39 @@ class PlaySound:
             self.background_playing = False
 
     def play_side_sound(self):
-        side_sound = pygame.mixer.Sound("util/side_sound.wav")
+        side_sound = pygame.mixer.Sound("util/sounds/side_sound.wav")
         side_sound.set_volume(self.quiet_sound)
         self.movement_channel.play(side_sound)
 
     def play_rotate_sound(self):
-        rotate_sound = rotate_sound = pygame.mixer.Sound("util/rotate_sound.wav")
+        rotate_sound = rotate_sound = pygame.mixer.Sound("util/sounds/rotate_sound.wav")
         self.movement_channel.play(rotate_sound)
         
     def play_place_sound(self):
-        place_sound = place_sound = pygame.mixer.Sound("util/place_sound.wav")
+        place_sound = place_sound = pygame.mixer.Sound("util/sounds/place_sound.wav")
         place_sound.set_volume(self.quiet_sound)
         self.movement_channel.play(place_sound)
 
     def play_pause_sound(self):
-        pause_sound = pygame.mixer.Sound("util/pause_sound.wav")
+        pause_sound = pygame.mixer.Sound("util/sounds/pause_sound.wav")
         self.movement_channel.play(pause_sound)
 
     def play_resume_sound(self):
-        resume_sound = pygame.mixer.Sound("util/resume_sound.wav")
+        resume_sound = pygame.mixer.Sound("util/sounds/resume_sound.wav")
         resume_sound.set_volume(self.quiet_sound)
         self.movement_channel.play(resume_sound)
 
     def play_tetris_sound(self):
-        tetris_sound = pygame.mixer.Sound("util/tetris_sound.wav")
+        tetris_sound = pygame.mixer.Sound("util/sounds/tetris_sound.wav")
         tetris_sound.set_volume(0.5)
         self.tetris_channel.play(tetris_sound)
 
     def play_settings_sound(self):
-        settings_sound = pygame.mixer.Sound("util/settings_sound.wav")
+        settings_sound = pygame.mixer.Sound("util/sounds/settings_sound.wav")
         self.movement_channel.play(settings_sound)
 
     def play_gameover_sound(self):
-        gameover_sound = pygame.mixer.Sound("util/gameover_sound.wav")
+        gameover_sound = pygame.mixer.Sound("util/sounds/gameover_sound.wav")
         gameover_sound.set_volume(self.quiet_sound)
         self.movement_channel.play(gameover_sound)
 
@@ -450,8 +450,7 @@ class SettingsButton:
         self.rect = self.text.get_rect(topleft=(10, 10))
 
     def draw(self):
-        pygame.draw.rect(self.screen, (255, 0, 0), self.rect)  # Red box behind the text
-        self.screen.blit(self.text, self.rect.topleft)  # Display "Settings" text
+        self.screen.blit(self.text, self.rect.topleft)
 
 
 
