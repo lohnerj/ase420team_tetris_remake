@@ -194,7 +194,6 @@ class Board(StartingValues):
                         zeros += 1
                 if zeros == 0:
                     self.play_sound.play_tetris_sound()
-                    #self.play_sound.play_tetris_sound()
                     delete_row(current_field, width, i)
         def delete_row(current_field, width, current_row):
             old_field = current_field
@@ -420,6 +419,38 @@ class PlaySound:
         gameover_sound.set_volume(self.quiet_sound)
         self.movement_channel.play(gameover_sound)
 
+class Settings:
+    def __init__(self, screen):
+        self.screen = screen
+        self.font = pygame.font.Font(None, 36)
+        self.text = self.font.render("Settings", True, (255, 0, 0))
+        self.text_rect = self.text.get_rect()
+        self.text_rect.center = (screen.get_width() // 2, screen.get_height() // 2)
+        self.back_button_rect = pygame.Rect(10, 10, 100, 50)
+
+    def draw(self):
+        self.screen.fill((255, 255, 255))  
+        self.screen.blit(self.text, self.text_rect)  
+
+    def handle_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                if self.back_button_rect.collidepoint(event.pos): 
+                    game.toggle_settings()  
+
+class SettingsButton:
+    def __init__(self, screen):
+        self.screen = screen
+        self.font = pygame.font.Font(None, 36)
+        self.text = self.font.render("Settings", True, (255, 255, 255))
+        self.rect = self.text.get_rect(topleft=(10, 10))
+
+    def draw(self):
+        pygame.draw.rect(self.screen, (255, 0, 0), self.rect)  # Red box behind the text
+        self.screen.blit(self.text, self.rect.topleft)  # Display "Settings" text
+
+
+
 class Gameover:
     def __init__(self, screen):
         self.font = pygame.font.Font(None, 36)
@@ -441,8 +472,12 @@ class Game:
         self.done = False
         self.level = 1
         self.paused = False
+        self.resume_button_visible = True
         self.pressing_down = False
         self.play_sound = PlaySound()
+        self.settings_open = False
+        self.settings = Settings(screen)
+        self.settings_button = SettingsButton(screen)
         self.game_over = False
         self.game_over_screen = Gameover(screen)
 
@@ -453,6 +488,11 @@ class Game:
         else:
             self.play_sound.play_background_sound()
         pause_button.toggle()
+
+    def toggle_settings(self):
+        self.paused = not self.paused
+        self.settings_open = not self.settings_open
+        self.resume_button_visible = not self.settings_open
 
     def run(self):
         fps = 25
@@ -472,6 +512,8 @@ class Game:
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     if pause_button.current_button_rect.collidepoint(event.pos):
                         self.toggle_pause()
+                    if self.settings_button.rect.collidepoint(event.pos):
+                        self.toggle_settings()
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_UP:
                         if not self.paused:
@@ -496,14 +538,18 @@ class Game:
 
             self.screen.fill(Color.WHITE)
 
-            if not self.paused:
+            if self.settings_open:
+                self.settings.draw()  # Draw settings screen
+                self.settings.handle_events()
+            elif not self.paused:
                 self.board.draw_board(self.screen)
                 self.move.draw_figure(self.screen)
             else:
-                pause_text = pause_button.font.render("Paused", True, Color.BLACK)
-                pause_rect = pause_text.get_rect()
-                pause_rect.center = (self.screen.get_width() // 2, self.screen.get_height() // 2)
-                self.screen.blit(pause_text, pause_rect)
+                if self.paused:
+                    pause_text = pause_button.font.render("Paused", True, Color.BLACK)
+                    pause_rect = pause_text.get_rect()
+                    pause_rect.center = (self.screen.get_width() // 2, self.screen.get_height() // 2)
+                    self.screen.blit(pause_text, pause_rect) 
 
             if self.board.get_state() == "Gameover":
                 self.play_sound.play_gameover_sound()
@@ -515,7 +561,10 @@ class Game:
                 pygame.time.wait(700)
                 self.done = True
 
-            pause_button.draw(self.screen)
+            if self.resume_button_visible:
+                pause_button.draw(self.screen)
+
+            self.settings_button.draw()
 
             pygame.display.flip()
             clock.tick(fps)
