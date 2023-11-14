@@ -414,6 +414,10 @@ class PlaySound:
         tetris_sound.set_volume(0.5)
         self.tetris_channel.play(tetris_sound)
 
+    def play_settings_sound(self):
+        settings_sound = pygame.mixer.Sound("util/settings_sound.wav")
+        self.movement_channel.play(settings_sound)
+
     def play_gameover_sound(self):
         gameover_sound = pygame.mixer.Sound("util/gameover_sound.wav")
         gameover_sound.set_volume(self.quiet_sound)
@@ -493,6 +497,7 @@ class Game:
         self.paused = not self.paused
         self.settings_open = not self.settings_open
         self.resume_button_visible = not self.settings_open
+        self.play_sound.play_settings_sound()
 
     def run(self):
         fps = 25
