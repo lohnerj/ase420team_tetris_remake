@@ -430,10 +430,25 @@ class Gameover:
         self.text = self.font.render("Game Over", True, (255, 0, 0))
         self.text_rect = self.text.get_rect()
         self.text_rect.center = (screen.get_width() // 2, screen.get_height() // 2)
+        self.restart_text = self.font.render("Press R to Restart", True, (0, 0, 0))
+        self.restart_rect = self.restart_text.get_rect()
+        self.restart_rect.center = (screen.get_width() // 2, screen.get_height() // 2 + 50)
 
     def draw(self, screen):
         screen.fill((255, 255, 255))
         screen.blit(self.text, self.text_rect)
+        screen.blit(self.restart_text, self.restart_rect)
+
+    def handle_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return "quit"
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_r:
+                    return "restart"
+                elif event.key == pygame.K_ESCAPE:
+                    return "quit"
+        return None
 
 
 class Game:
@@ -512,13 +527,7 @@ class Game:
             if self.board.get_state() == "Gameover":
                 self.play_sound.play_gameover_sound()
                 self.game_over = True
-                #self.done = True
-
-            if self.game_over:
-                self.game_over_screen.draw(screen)
-                pygame.display.flip()
-                pygame.time.wait(700)
-                self.done = True
+                self.display_game_over()
 
             pause_button.draw(self.screen)
 
@@ -530,6 +539,30 @@ class Game:
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 if pause_button.rect.collidepoint(event.pos):
                     self.toggle_pause()
+
+    def display_game_over(self):
+        while self.game_over:
+            result = self.game_over_screen.handle_events()
+            if result == "restart":
+                self.reset_game()
+                self.game_over = False
+            elif result == "quit":
+                self.done = True
+                self.game_over = False
+
+            self.game_over_screen.draw(self.screen)
+            pygame.display.flip()
+            clock.tick(30)
+
+    def reset_game(self):
+        self.figure = MakePopUpBox().get_which_figure_size_user_chooses()
+        self.board = Board()
+        self.move = Move(self.figure, self.board)
+        self.level = 1
+        self.paused = False
+        self.pressing_down = False
+        self.game_over = False
+        self.play_sound.play_background_sound()
 
 if __name__ == "__main__":
     pygame.init()
