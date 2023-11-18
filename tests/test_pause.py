@@ -13,7 +13,7 @@ class TestPause(unittest.TestCase):
         # Initially, the game should not be paused
         self.assertFalse(pause_button.is_paused(), "Game is already paused.")
 
-        # Toggle the pause
+        # Toggle pause
         pause_button.toggle()
         self.assertTrue(pause_button.is_paused(), "Pause toggle not working.")
 
