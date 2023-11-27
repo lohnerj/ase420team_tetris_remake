@@ -420,6 +420,9 @@ class Pause:
     def is_paused(self):
         return self.paused
     
+    def pausedraw(self, screen):
+        screen.blit(self.current_button_text, self.current_button_rect)
+    
 class StartMenu(object):
     def __init__(self):
         self.width = 400
@@ -725,6 +728,8 @@ class Game:
         self.game_over_screen = Gameover(screen)
         self.background_color = startmenu.display_background_color_options()
 
+    
+
     def toggle_pause(self):
         self.paused = not self.paused
         if self.paused:
@@ -789,7 +794,7 @@ class Game:
                 self.game_over = True
                 self.display_game_over()
 
-            #pause_button.draw(self.screen)
+            pause_button.pausedraw(self.screen)
             
             
 
