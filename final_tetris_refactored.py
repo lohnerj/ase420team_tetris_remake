@@ -1,6 +1,7 @@
+
 import random
 import pygame
-
+from tkinter import *
 class Color(object):
     BLACK = (0, 0, 0)
     WHITE = (255, 255, 255)
@@ -576,8 +577,6 @@ class StartMenu(object):
             pygame.display.flip()
         pygame.display.update()
         return self.get_background_color()
-    
-    
 class Button(object):
     def __init__(self, x, y, image, scale):
         width = image.get_width()
@@ -597,10 +596,31 @@ class Button(object):
                 print('Clicked!!')
             
         screen.blit(self.image, self.rect)
-        return action
+        return action    
+    
+# class Button(object):
+#     def __init__(self, x, y, image, scale):
+#         width = image.get_width()
+#         height = image.get_height()
+#         self.image = pygame.transform.scale(image, (int(width * scale), int(height * scale)))
+#         self.rect = self.image.get_rect(topleft=(x, y))
+#         self.clicked = False
 
-    def draw(self, screen):
-        screen.blit(self.current_button_text, self.current_button_rect)
+#     def draw(self):
+#         action = False
+#         pos = pygame.mouse.get_pos()
+        
+#         if self.rect.collidepoint(pos):
+#             if pygame.mouse.get_pressed()[0] == 1 and self.clicked == False:
+#                 self.clicked = True
+#                 action = True
+#                 print('Clicked!!')
+            
+#         screen.blit(self.image, self.rect)
+#         return action
+
+#     def draw(self, screen):
+#         screen.blit(self.current_button_text, self.current_button_rect)
 
 class PlaySound:
     def __init__(self):
@@ -769,7 +789,9 @@ class Game:
                 self.game_over = True
                 self.display_game_over()
 
-            pause_button.draw(self.screen)
+            #pause_button.draw(self.screen)
+            
+            
 
             pygame.display.flip()
             clock.tick(fps)
