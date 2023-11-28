@@ -1,0 +1,2 @@
+Design patterns implemented:
+	1. Stratgey Design Pattern: We implemented this pattern to be used in the Game classes pygame events loop. It uses the Strategy interface, different strategy classes, and a context class to make the decision of what strategy to execute.
