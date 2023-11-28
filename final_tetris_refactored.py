@@ -61,7 +61,7 @@ class Color(object):
     def get_hot_pink(self): return self._HOT_PINK
     def get_neon_blue(self): return self._NEON_BLUE
     def get_neon_orange(self): return self._NEON_ORANGE
-    def get_neon_yellow(self): return self._NEON_ORANGE
+    def get_neon_yellow(self): return self._NEON_YELLOW
     def get_turqoise(self): return self._TURQOISE
 
 class TraditionalTetrisColors(object):
@@ -264,6 +264,7 @@ class MakeSixBlockFigure(MakeFigure):
 class Board(StartingValues):
     def __init__(self, color_scheme):
         super().__init__()
+        self.play_sound = PlaySound()
         self._field = []
         self._color_scheme = color_scheme.getColorScheme()
         for i in range(self.get_height()):
@@ -296,6 +297,7 @@ class Board(StartingValues):
                     if current_field[i][j] == 0:
                         zeros += 1
                 if zeros == 0:
+                    self.play_sound.play_tetris_sound()
                     delete_row(current_field, width, i)
         def delete_row(current_field, width, current_row):
             old_field = current_field
@@ -333,9 +335,12 @@ class ManipulateFigure(object):
             (self.get_current_figure().get_rotation() + 1)
             % len(
                 self.get_current_figure().figures[self.get_current_figure().get_type()]))
-        if self.intersects():
+        if not self.intersects():
+            self.play_sound.play_rotate_sound()
+        else:
             self.get_current_figure().update_rotation(old_rotation)
     def freeze(self):
+        self.play_sound.play_place_sound()
         new_field = self.get_current_board().get_current_field()
         for i in range(self.get_current_figure().get_blocks_per_figure()):
             for j in range(self.get_current_figure().get_blocks_per_figure()):
@@ -363,6 +368,7 @@ class ManipulateFigure(object):
 class Move(ManipulateFigure):
     def __init__(self, current_figure, board):
         super().__init__(current_figure, board)
+        self.play_sound = PlaySound()
     def go_space(self):
         while not self.intersects():
             self.get_current_figure().update_shift_y(self.get_current_figure().get_shift_y() + 1)
@@ -379,24 +385,41 @@ class Move(ManipulateFigure):
         self.get_current_figure().update_shift_x(self.get_current_figure().get_shift_x() + dx)
         if self.intersects():
             self.get_current_figure().update_shift_x(old_x)
+        else:
+            self.play_sound.play_side_sound()
 
 
 
 class Pause:
     def __init__(self, screen):
-        self.font = pygame.font.Font(None, 30)
-        self.font.set_bold(True)
-        self.text = self.font.render("||", True, (0, 0, 0))
-        self.rect = self.text.get_rect()
-        self.rect.x = (screen.get_width() - self.rect.width) - 20
-        self.rect.y = 15
+        self.font = pygame.font.Font('util/fonts/seguisym.ttf', 25)
+        self.font.set_bold(False)
         self.paused = False
+        self.play_button_text = self.font.render("\u25B6", True, (0, 0, 0))
+        self.play_button_rect = self.play_button_text.get_rect()
+        self.play_button_rect.center = (screen.get_width() // 2, screen.get_height() // 2)
+        self.pause_button_text = self.font.render("||", True, (0, 0, 0))
+        self.pause_button_rect = self.pause_button_text.get_rect()
+        self.pause_button_rect.x = (screen.get_width() - self.pause_button_rect.width) - 20
+        self.pause_button_rect.y = 15
+        self.current_button_text = self.pause_button_text
+        self.current_button_rect = self.pause_button_rect
+        self.play_sound = PlaySound()
 
     def toggle(self):
         self.paused = not self.paused
+        if self.paused:
+            self.play_sound.play_pause_sound()
+            self.current_button_text = self.play_button_text
+        else:
+            self.play_sound.play_resume_sound()
+            self.current_button_text = self.pause_button_text
 
     def is_paused(self):
         return self.paused
+    
+    def pausedraw(self, screen):
+        screen.blit(self.current_button_text, self.current_button_rect)
     
 class StartMenu(object):
     def __init__(self):
@@ -406,7 +429,7 @@ class StartMenu(object):
         self.users_selected_color_scheme = 0
         self.users_selected_figures = 0
         self.background_color = 0
-        self.font = pygame.font.Font('freesansbold.ttf', 26)
+        self.font = pygame.font.Font('freesansbold.ttf', 26) #should i change font to the font in the util folder?
 
     def set_users_choice_color_scheme(self, color_scheme_selected):
         self.users_selected_color_scheme = color_scheme_selected
@@ -421,6 +444,27 @@ class StartMenu(object):
     def get_background_color(self):
         return self.background_color
     
+    def display_options(self, buttons, title, function_setter, function_getter, screen):
+        text = self.font.render(title, True, Color().BLACK)
+        textRect = text.get_rect(topleft=(60,200))
+
+        run = True
+        while run:
+            screen.fill((202,228,241))
+            screen.blit(text, textRect)
+
+            for button in buttons:
+                if button.draw(screen):
+                    function_setter(button.get_method_to_set_to()) #maybe rename this?
+                    run = False
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        run = False
+
+            pygame.display.flip()
+            
+        pygame.display.update()
+        return function_getter()
 
     def display_color_schemes(self):
         classic_color_button_img = pygame.image.load("button_images/button_classic-colors.png").convert_alpha()
@@ -428,39 +472,16 @@ class StartMenu(object):
         autumn_color_button_img = pygame.image.load("button_images/button_autumn-colors.png").convert_alpha()
         bright_color_button_img = pygame.image.load("button_images/button_bright-colors.png").convert_alpha()
         
-        classic_color_button = Button(10, 10, classic_color_button_img, .7)
-        rainbow_color_button = Button(10, 75, rainbow_color_button_img, .7)
-        autumn_color_button = Button(200, 10, autumn_color_button_img, .7)
-        bright_color_button = Button(215, 75, bright_color_button_img, .7)
+        buttons = [
+            Button(10, 10, classic_color_button_img, .7, TraditionalTetrisColors()),
+            Button(10, 75, rainbow_color_button_img, .7, RainbowTetrisColors()),
+            Button(200, 10, autumn_color_button_img, .7, AutumnTetrisColors()),
+            Button(215, 75, bright_color_button_img, .7, BrightTetrisColors())
+        ]
 
-        text = self.font.render('Pick A Color Scheme', True, Color().BLACK)
-        textRect = text.get_rect(topleft=(60,200))
+        return self.display_options(buttons, 'Pick A Color Scheme', self.set_users_choice_color_scheme, self.get_users_choice_color_scheme, self.screen)
 
-        run = True
-        while run:
-            self.screen.fill((202, 228, 241))
-            self.screen.blit(text, textRect)
-            if classic_color_button.draw():
-                self.set_users_choice_color_scheme(TraditionalTetrisColors())
-                run = False
-            elif rainbow_color_button.draw():
-                self.set_users_choice_color_scheme(RainbowTetrisColors())
-                run = False
-            elif autumn_color_button.draw():
-                self.set_users_choice_color_scheme(AutumnTetrisColors())
-                run = False
-            elif bright_color_button.draw():
-                self.set_users_choice_color_scheme(BrightTetrisColors())
-                run = False
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    run = False
-
-            pygame.display.flip()
-            
-        pygame.display.update()
-    
-
+        
     def display_figure_selection(self):
         self.display_color_schemes()
 
@@ -468,38 +489,13 @@ class StartMenu(object):
         five_figure_img = pygame.image.load("button_images/button_5_block-figures.png").convert_alpha()
         six_figure_img = pygame.image.load("button_images/button_6_block-figures.png").convert_alpha()
         
-        four_figure_button = Button(100, 210, four_figure_img, .8)
-        five_figure_button = Button(100, 285, five_figure_img, .8)
-        six_figure_button = Button(100, 360, six_figure_img, .8)
-
-        text1 = self.font.render('Which Tetromino Figures', True, Color().BLACK)
-        text2 = self.font.render('Do You Want To Play With?', True, Color().BLACK)
-        textRect1 = text1.get_rect(topleft=(50,100))
-        textRect2 = text2.get_rect(topleft=(50,130))
-
-        run = True
-        while run:
-
-            self.screen.fill((202, 228, 241))
-            self.screen.blit(text1, textRect1)
-            self.screen.blit(text2, textRect2)
-            if four_figure_button.draw():
-                self.set_users_choice_figures(MakeFourBlockFigure(3,0,self.get_users_choice_color_scheme()))
-                run = False
-            elif five_figure_button.draw():
-                self.set_users_choice_figures(MakeFiveBlockFigure(3, 0, self.get_users_choice_color_scheme()))
-                run = False
-            elif six_figure_button.draw():
-                self.set_users_choice_figures(MakeSixBlockFigure(3, 0, self.get_users_choice_color_scheme()))
-                run = False
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    run = False
-
-            pygame.display.flip()
-
-        pygame.display.update()
-        return self.get_users_choice_figures()
+        buttons = [
+            Button(100, 250, four_figure_img, .8, MakeFourBlockFigure(3,0,self.get_users_choice_color_scheme())),
+            Button(100, 325, five_figure_img, .8, MakeFiveBlockFigure(3, 0, self.get_users_choice_color_scheme())),
+            Button(100, 400, six_figure_img, .8, MakeSixBlockFigure(3, 0, self.get_users_choice_color_scheme())),
+        ]
+        
+        return self.display_options(buttons, 'Which Tetromino Figures?', self.set_users_choice_figures, self.get_users_choice_figures, self.screen)
     
     def display_background_color_options(self):
         light_pink_button_option_img = pygame.image.load("button_images/button_light-pink.png").convert_alpha()
@@ -509,63 +505,31 @@ class StartMenu(object):
         white_button_option_img = pygame.image.load("button_images/button_white.png").convert_alpha()
         black_button_option_img = pygame.image.load("button_images/button_black.png").convert_alpha()
 
-        light_pink_background = Button(10, 0, light_pink_button_option_img, .8)
-        sky_blue_background = Button(10, 75, sky_blue_button_option_img, .8)
-        mint_background = Button(10, 150, mint_button_option_img, .8)
-        lavender_background = Button(200, 0, lavender_button_option_img, .8)
-        white_background = Button(200, 75, white_button_option_img, .8)
-        black_background = Button(200, 150, black_button_option_img, .8)
-
-        text = self.font.render('Pick A Background Color', True, Color().BLACK)
-        textRect = text.get_rect(topleft=(50,250))
-
-        run = True
-        while run:
-
-            self.screen.fill((202,228,241))
-            self.screen.blit(text, textRect)
-            if light_pink_background.draw():
-                self.set_background_color(Color().get_light_pink())
-                run = False
-
-            elif sky_blue_background.draw():
-                self.set_background_color(Color().get_sky_blue())
-                run = False
-
-            elif mint_background.draw():
-                self.set_background_color(Color().get_mint())
-                run = False
-                    
-            elif lavender_background.draw():
-                self.set_background_color(Color().get_lavender())
-                run = False
-
-            elif white_background.draw():
-                self.set_background_color(Color().WHITE)
-                run = False
-
-            elif black_background.draw():
-                self.set_background_color(Color().BLACK)
-                run = False
-
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    run = False
-
-            pygame.display.flip()
-        pygame.display.update()
-        return self.get_background_color()
+        buttons = [
+            Button(10, 0, light_pink_button_option_img, .8, Color().get_light_pink()),
+            Button(10, 65, sky_blue_button_option_img, .8, Color().get_sky_blue()),
+            Button(10, 140, mint_button_option_img, .8, Color().get_mint()),
+            Button(200, 0, lavender_button_option_img, .8, Color().get_lavender()),
+            Button(200, 65, white_button_option_img, .8, Color().WHITE),
+            Button(200, 140, black_button_option_img, .8, Color().BLACK)
+        ]
+       
+        return self.display_options(buttons, 'Pick A Background Color', self.set_background_color, self.get_background_color, self.screen)
     
-    
+
 class Button(object):
-    def __init__(self, x, y, image, scale):
+    def __init__(self, x, y, image, scale, set_to_method):
         width = image.get_width()
         height = image.get_height()
         self.image = pygame.transform.scale(image, (int(width * scale), int(height * scale)))
         self.rect = self.image.get_rect(topleft=(x, y))
         self.clicked = False
+        self.set_to = set_to_method
 
-    def draw(self):
+    def get_method_to_set_to(self):
+        return self.set_to
+
+    def draw(self, screen):
         action = False
         pos = pygame.mouse.get_pos()
         
@@ -573,10 +537,95 @@ class Button(object):
             if pygame.mouse.get_pressed()[0] == 1 and self.clicked == False:
                 self.clicked = True
                 action = True
-                print('Clicked!!')
             
         screen.blit(self.image, self.rect)
-        return action
+        return action    
+    
+
+class PlaySound:
+    def __init__(self):
+        pygame.mixer.init(44100, -16, 2, 2048)
+        self.background_channel = pygame.mixer.Channel(1) 
+        self.movement_channel = pygame.mixer.Channel(2) 
+        self.tetris_channel = pygame.mixer.Channel(3) 
+        self.quiet_sound = 0.2
+        self.background_sound = pygame.mixer.Sound("util/sounds/background_sound.wav")
+        self.background_playing = False
+        
+
+    def play_background_sound(self):
+        if not self.background_playing:
+            self.background_sound.set_volume(0.5)
+            self.background_channel.play(self.background_sound, loops=-1)
+            self.background_playing = True
+
+    def stop_background_sound(self):
+        if self.background_playing:
+            self.background_channel.stop()
+            self.background_playing = False
+
+    def play_side_sound(self):
+        side_sound = pygame.mixer.Sound("util/sounds/side_sound.wav")
+        side_sound.set_volume(self.quiet_sound)
+        self.movement_channel.play(side_sound)
+
+    def play_rotate_sound(self):
+        rotate_sound = rotate_sound = pygame.mixer.Sound("util/sounds/rotate_sound.wav")
+        self.movement_channel.play(rotate_sound)
+        
+    def play_place_sound(self):
+        place_sound = place_sound = pygame.mixer.Sound("util/sounds/place_sound.wav")
+        place_sound.set_volume(self.quiet_sound)
+        self.movement_channel.play(place_sound)
+
+    def play_pause_sound(self):
+        pause_sound = pygame.mixer.Sound("util/sounds/pause_sound.wav")
+        self.movement_channel.play(pause_sound)
+
+    def play_resume_sound(self):
+        resume_sound = pygame.mixer.Sound("util/sounds/resume_sound.wav")
+        resume_sound.set_volume(self.quiet_sound)
+        self.movement_channel.play(resume_sound)
+
+    def play_tetris_sound(self):
+        tetris_sound = pygame.mixer.Sound("util/sounds/tetris_sound.wav")
+        tetris_sound.set_volume(0.5)
+        self.tetris_channel.play(tetris_sound)
+
+    def play_settings_sound(self):
+        settings_sound = pygame.mixer.Sound("util/sounds/settings_sound.wav")
+        self.movement_channel.play(settings_sound)
+
+    def play_gameover_sound(self):
+        gameover_sound = pygame.mixer.Sound("util/sounds/gameover_sound.wav")
+        gameover_sound.set_volume(self.quiet_sound)
+        self.movement_channel.play(gameover_sound)
+
+class Gameover:
+    def __init__(self, screen):
+        self.font = pygame.font.Font(None, 36)
+        self.text = self.font.render("Game Over", True, (255, 0, 0))
+        self.text_rect = self.text.get_rect()
+        self.text_rect.center = (screen.get_width() // 2, screen.get_height() // 2)
+        self.restart_text = self.font.render("Press R to Restart", True, (0, 0, 0))
+        self.restart_rect = self.restart_text.get_rect()
+        self.restart_rect.center = (screen.get_width() // 2, screen.get_height() // 2 + 50)
+
+    def draw(self, screen):
+        screen.fill((255, 255, 255))
+        screen.blit(self.text, self.text_rect)
+        screen.blit(self.restart_text, self.restart_rect)
+
+    def handle_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return "quit"
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_r:
+                    return "restart"
+                elif event.key == pygame.K_ESCAPE:
+                    return "quit"
+        return None
 
 
 class Game:
@@ -590,42 +639,36 @@ class Game:
         self.level = 1
         self.paused = False
         self.pressing_down = False
+        self.play_sound = PlaySound()
+        self.game_over = False
+        self.game_over_screen = Gameover(screen)
         self.background_color = startmenu.display_background_color_options()
 
     def toggle_pause(self):
         self.paused = not self.paused
+        if self.paused:
+            self.play_sound.stop_background_sound()
+        else:
+            self.play_sound.play_background_sound()
+        pause_button.toggle()
 
     def run(self):
         fps = 25
         counter = 0
+        self.game_over = False
+
+        self.play_sound.play_background_sound()
+        
 
         while not self.done:
             counter += 1
             if counter > 100000:
                 counter = 0
 
+            context = Context(self)
             for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.done = True
-                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                    if pause_button.rect.collidepoint(event.pos):
-                        self.toggle_pause()
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_UP:
-                        if not self.paused:
-                            self.move.rotate()
-                    if event.key == pygame.K_LEFT:
-                        if not self.paused:
-                            self.move.go_side(-1)
-                    if event.key == pygame.K_RIGHT:
-                        if not self.paused:
-                            self.move.go_side(1)
-                    if event.key == pygame.K_DOWN:
-                        self.pressing_down = True
-                    if event.key == pygame.K_SPACE:
-                        self.toggle_pause()
-                if event.type == pygame.KEYUP and event.key == pygame.K_DOWN:
-                    self.pressing_down = False
+                
+                context.make_decision(event)
 
             if not self.paused:
                 if counter % (fps // 2 // self.level) == 0 or self.pressing_down:
@@ -644,13 +687,100 @@ class Game:
                 self.screen.blit(pause_text, pause_rect)
 
             if self.board.get_state() == "Gameover":
-                self.done = True
+                self.play_sound.play_gameover_sound()
+                self.game_over = True
+                self.display_game_over()
 
-            self.screen.blit(pause_button.text, pause_button.rect)
+            pause_button.pausedraw(self.screen)
 
             pygame.display.flip()
             clock.tick(fps)
+            
 
+    def display_game_over(self):
+        while self.game_over:
+            result = self.game_over_screen.handle_events()
+            if result == "restart":
+                self.reset_game()
+                self.game_over = False
+            elif result == "quit":
+                self.done = True
+                self.game_over = False
+
+            self.game_over_screen.draw(self.screen)
+            pygame.display.flip()
+            clock.tick(30)
+
+    def reset_game(self):
+        startmenu = StartMenu()
+        self.figure = startmenu.display_figure_selection() #added
+        self.board = Board(startmenu.get_users_choice_color_scheme()) #added
+        self.move = Move(self.figure, self.board)
+        self.level = 1
+        self.paused = False
+        self.pressing_down = False
+        self.game_over = False
+        self.background_color = startmenu.display_background_color_options() #added
+        self.play_sound.play_background_sound()
+
+
+class Strategy(object):
+    def execute(self, game): pass
+
+class QuitStartegy(Strategy):
+    def execute(self, game):
+        game.done = True
+class PauseStrategy(Strategy):
+    def execute(self, game):
+        game.toggle_pause()
+class RotateStrategy(Strategy):
+    def execute(self, game):
+        game.move.rotate()
+class GoLeftStrategy(Strategy):
+    def execute(self, game):
+        game.move.go_side(-1)
+class GoRightStrategy(Strategy):
+    def execute(self, game):
+        game.move.go_side(1)
+class GoDownStrategy(Strategy):
+    def execute(self, game):
+        game.pressing_down = True
+class ReleaseGoDownStrategy(Strategy):
+    def execute(self, game):
+        game.pressing_down = False
+
+class Context(object):
+    def __init__(self, game):
+        self.game = game
+        self.strategy = None
+    def set_strategy(self, strategy):
+        self.strategy = strategy
+    def make_decision(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            if pause_button.current_button_rect.collidepoint(event.pos):
+                self.set_strategy(PauseStrategy())
+        if event.type == pygame.QUIT:
+            self.set_strategy(QuitStartegy())
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_UP:
+                if not self.game.paused:
+                    self.set_strategy(RotateStrategy())
+            if event.key == pygame.K_LEFT:
+                if not self.game.paused:
+                    self.set_strategy(GoLeftStrategy())
+            if event.key == pygame.K_RIGHT:
+                if not self.game.paused:
+                    self.set_strategy(GoRightStrategy())
+            if event.key == pygame.K_DOWN:
+                self.set_strategy(GoDownStrategy())
+            if event.key == pygame.K_SPACE:
+                self.set_strategy(PauseStrategy())
+                self.strategy.execute(self.game)  #if strategy isn't  executed in this if statement. It will not pause the screen. There is some kind of odd timing issue that prevents that, hence why i have the execute method in this if statement.
+        if event.type == pygame.KEYUP and event.key == pygame.K_DOWN:
+            self.set_strategy(ReleaseGoDownStrategy())
+
+        if self.strategy:
+            self.strategy.execute(self.game)
 
 if __name__ == "__main__":
     pygame.init()
