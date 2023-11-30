@@ -710,7 +710,52 @@ class Gameover:
                 elif event.key == pygame.K_ESCAPE:
                     return "quit"
         return None
+# class MakePopUpBox(object):
+#     def __init__(self):
+#         self._figure = 0
 
+#     def set_figure_size_selected(self, figure_size_selected):
+#         self._figure = figure_size_selected
+
+#     def get_figure_size_selected(self):
+#         return self._figure
+
+#     def get_which_figure_size_user_chooses(self):
+#         root = Tk()
+#         root.title("Pick which figures you want to play with")
+#         width = 400
+#         height = 500
+
+#         screen_width = root.winfo_screenwidth()
+#         screen_height = root.winfo_screenheight()
+
+#         x_position = (screen_width / 2) - (width / 2)
+#         y_position = (screen_height / 2) - (height / 2)
+
+#         root.geometry('%dx%d+%d+%d' % (width, height, x_position, y_position))
+
+#         def four_figure_clicked():
+#             self.set_figure_size_selected(MakeFourBlockFigure(3, 0))
+#             root.destroy()
+
+#         def five_figure_clicked():
+#             self.set_figure_size_selected(MakeFiveBlockFigure(3, 0))
+#             root.destroy()
+
+#         def six_figure_clicked():
+#             self.set_figure_size_selected(MakeSixBlockFigure(3, 0))
+#             root.destroy()
+
+#         buttonFourBlockFigure = Button(root, text="4 block figures", padx=40, pady=20, command=four_figure_clicked, bg="pink")
+#         buttonFiveBlockFigure = Button(root, text="5 block figures", padx=40, pady=20, command=five_figure_clicked, bg="pink")
+#         buttonSixBlockFigure = Button(root, text="6 block figures", padx=40, pady=20, command=six_figure_clicked, bg="pink")
+#         label = Label(root, text="Select which figures you want to play with!", padx=30, pady=20)
+#         label.pack()
+#         buttonFourBlockFigure.pack()
+#         buttonFiveBlockFigure.pack()
+#         buttonSixBlockFigure.pack()
+#         root.mainloop()
+#         return self.get_figure_size_selected()
 
 class Game:
     def __init__(self, screen):
