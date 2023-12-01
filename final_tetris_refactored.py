@@ -76,7 +76,7 @@ class AutumnTetrisColors(ColorScheme):
         self._colors = (Color().get_color("BLACK"),
                         Color().get_color("RUST_ORANGE"),
                         Color().get_color("MAROON"),
-                        Color().get_color("YELLOW"),
+                        Color().get_color("GOLDEN_YELLOW),
                         Color().get_color("BURNT_SIENNA"),
                         Color().get_color("OLIVE_GREEN"),
                         Color().get_color("DARK_BROWN"))
@@ -726,7 +726,7 @@ class Strategy(metaclass=ABCMeta):
     @abstractmethod
     def execute(self): pass
 
-class QuitStartegy(Strategy):
+class QuitStrategy(Strategy):
     def execute(self, game):
         game.done = True
 class PauseStrategy(Strategy):
@@ -759,7 +759,7 @@ class Context(object):
             if pause_button.current_button_rect.collidepoint(event.pos):
                 self.set_strategy(PauseStrategy())
         if event.type == pygame.QUIT:
-            self.set_strategy(QuitStartegy())
+            self.set_strategy(QuitStrategy())
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP:
                 if not self.game.paused:
