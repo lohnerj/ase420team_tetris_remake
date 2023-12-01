@@ -1,3 +1,5 @@
+# USER MANUAL
+
 ## PAUSE
 * To use the pause feature locate and click on the "||" in the top rihgt corner of your screen.
 * Upon clicking, your game will be successfully paused and a screen reading "paused" should appear along with a play button (black right triangle).
