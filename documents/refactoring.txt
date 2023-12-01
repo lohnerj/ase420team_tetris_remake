@@ -2,4 +2,5 @@
 2. Self Encapsulate Field: Some methods were accessing fields directly in classes, so we had to encapsuate those values and use getter methods to follow OOP principles.
 3. Pull up method: When creating the different block figures classes, some of the classes had duplicate methods, so we used this refactoring pattern to put similar code in the superclass MakeFigure.
 4. Extract Class: When classes have gotten too large and started to violate SRP, we have had to use this refactoring pattern many times throughout adding features to keep code clean. An example of us using this pattern was creating the Game class instead of running all our code in the main.
-5 Replace Magic Number with Symbolic Constant: The numbers of blocks per figure used to just be a variable, but since that number never changes, we made it a constant and gave it a easy to understand name.
+5. Replace Magic Number with Symbolic Constant: The numbers of blocks per figure used to just be a variable, but since that number never changes, we made it a constant and gave it a easy to understand name.
+6. Replace Inheritance with Delegation: The Board class inherited from the StartingValues class. We replaced this inheritance with delegation to make the code cleaner.
