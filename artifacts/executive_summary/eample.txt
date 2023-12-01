@@ -1,2 +1,6 @@
 To make a good executive summary, I recommend you wear the shoes of a stakeholder who knows little about your team’s work.
  Then, make the executive summary as an introduction to guide you (stakeholder) in teaching the idea, the goal, the structure, and the final results. 
+
+ Executive Summary:
+
+ The project given was to redesign and refactor the given Tetris program.
