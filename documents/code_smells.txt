@@ -1,0 +1,9 @@
+1. Duplication: methods in the start menu class are very similar and could be refactored to have less duplication among methods.
+2. Large class: Some of the classes are large and could be broken down.
+3. Large methods: Some of the methods have become very large and could be divided up.
+4. Temp Fields: There are some temporary fields thoughout the code that may be unnecessary.
+5. Comments: Some unnecessary comments that could be avoided by more clearly named method names.
+6. Dead Code: I noticed a class in the code that is not used once throghout the entire code.
+7. Refused Bequest: BaseFigure inherits from the StartingValues class and it is not really used in the class at all, making it unnecessary.
+8. Primitive Obsession?
+9. 
