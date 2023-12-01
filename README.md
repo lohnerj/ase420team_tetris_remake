@@ -4,10 +4,10 @@
 
 
 ### Developers:
-* name
-* name
-* name
-* name
+* Julianna Truitt
+* Amaya Bryant
+* Prosper Jibunor
+* Josh Lohner
 
 ### Credits:
 * `Background Music:` https://freesound.org/people/BloodPixelHero/sounds/648485/
