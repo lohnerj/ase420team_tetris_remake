@@ -1,5 +1,6 @@
 import random
 import pygame
+from abc import ABCMeta, abstractmethod
 
 class Color(object):
     BLACK = (0, 0, 0)
@@ -135,9 +136,9 @@ class StartingValues(object):
         return self._width
     def set_state(self, state):
         self._state = state
-        
 
-class MakeFigure(StartingValues):
+
+class BaseFigure(object):
     def __init__(self, shift_x, shift_y, color_scheme):
         super().__init__()
         self._exact_color = random.randint(1, len(color_scheme.getColorScheme()) - 1) #!!
@@ -171,7 +172,7 @@ class MakeFigure(StartingValues):
         return self._color_scheme
 
 
-class MakeFourBlockFigure(MakeFigure):
+class MakeFourBlockFigure(BaseFigure):
     figures = (
         [[1, 5, 9, 13], [4, 5, 6, 7]],
         [[4, 5, 9, 10], [2, 6, 5, 9]],
@@ -185,13 +186,13 @@ class MakeFourBlockFigure(MakeFigure):
     def __init__(self, shift_x, shift_y, color_scheme):
         super().__init__(shift_x, shift_y, color_scheme)
         self._type = random.randint(0, len(self.figures) - 1)
-        self._blocksPerFigure = 4
+        self._BLOCKS_PER_FIGURE = 4
 
     def get_type(self):
         return self._type
 
     def get_blocks_per_figure(self):
-        return self._blocksPerFigure
+        return self._BLOCKS_PER_FIGURE
 
     def get_figure_shape(self):
         return self.figures[self.get_type()][self.get_rotation()]
@@ -200,7 +201,7 @@ class MakeFourBlockFigure(MakeFigure):
         return MakeFourBlockFigure(3, 0, color_scheme) #!!!
 
 
-class MakeFiveBlockFigure(MakeFigure):
+class MakeFiveBlockFigure(BaseFigure):
     figures = (
         [[2, 7, 12, 17, 22], [5, 6, 7, 8, 9]],
         [[11, 12, 16, 17, 21], [10, 11, 12, 16, 17], [7, 11, 12, 16, 17], [11, 12, 16, 17, 18]],
@@ -214,13 +215,13 @@ class MakeFiveBlockFigure(MakeFigure):
     def __init__(self, shift_x, shift_y, color_scheme):
         super().__init__(shift_x, shift_y, color_scheme)
         self._type = random.randint(0, len(self.figures) - 1)
-        self._blocksPerFigure = 5
+        self._BLOCKS_PER_FIGURE = 5
 
     def get_type(self):
         return self._type
 
     def get_blocks_per_figure(self):
-        return self._blocksPerFigure
+        return self._BLOCKS_PER_FIGURE
 
     def get_figure_shape(self):
         return self.figures[self.get_type()][self.get_rotation()]
@@ -228,7 +229,7 @@ class MakeFiveBlockFigure(MakeFigure):
     def get_new_figure(self, color_scheme):
         return MakeFiveBlockFigure(3, 0, color_scheme)
 
-class MakeSixBlockFigure(MakeFigure):
+class MakeSixBlockFigure(BaseFigure):
     figures = (
         [[12,13,14,15,16,17], [2,8,14,20,26,32]],
         [[13,19,20,21,15,9], [15,14,20,26,27,28], [22,16,15,14,20,26],[26,27,21,15,14,13]],
@@ -246,30 +247,61 @@ class MakeSixBlockFigure(MakeFigure):
     def __init__(self, shift_x, shift_y, color_scheme):
         super().__init__(shift_x, shift_y, color_scheme)
         self._type = random.randint(0, len(self.figures) - 1)
-        self._blocksPerFigure = 6
+        self._BLOCKS_PER_FIGURE = 6
 
     def get_type(self):
         return self._type
 
     def get_blocks_per_figure(self):
-        return self._blocksPerFigure
+        return self._BLOCKS_PER_FIGURE
 
     def get_figure_shape(self):
         return self.figures[self.get_type()][self.get_rotation()]
 
     def get_new_figure(self, color_scheme):
         return MakeSixBlockFigure(3, 0, color_scheme)
+    
+
+class IFactoryClass(metaclass=ABCMeta):
+    @abstractmethod
+    def create_figure(self, color_scheme): pass
+
+class FactoryClass(object):
+    def create_figure(self, color_scheme, number_of_blocks_in_figure):
+        if number_of_blocks_in_figure == 4:
+            return FourBlockFigureFactory().create_figure(color_scheme)
+        elif number_of_blocks_in_figure == 5:
+            return FiveBlockFigureFactory().create_figure(color_scheme)
+        elif number_of_blocks_in_figure == 6:
+            return SixBlockFigureFactory().create_figure(color_scheme)
+        else:
+            return None
+        
+        
+class FourBlockFigureFactory(IFactoryClass):
+    def create_figure(self, color_scheme):
+        return MakeFourBlockFigure(3, 0, color_scheme)
+    
+class FiveBlockFigureFactory(IFactoryClass):
+    def create_figure(self, color_scheme):
+        return MakeFiveBlockFigure(3, 0, color_scheme)
+
+class SixBlockFigureFactory(IFactoryClass):
+    def create_figure(self, color_scheme):
+        return MakeSixBlockFigure(3, 0, color_scheme)
 
 
-class Board(StartingValues):
+class Board(object):
     def __init__(self, color_scheme):
-        super().__init__()
         self.play_sound = PlaySound()
+        self._starting_values = StartingValues()
         self._field = []
         self._color_scheme = color_scheme.getColorScheme()
-        for i in range(self.get_height()):
-            new_line = [0] * self.get_width()
+        for i in range(self._starting_values.get_height()):
+            new_line = [0] * self._starting_values.get_width()
             self.add_to_field(new_line)
+    def get_starting_values(self):
+        return self._starting_values
     def get_current_field(self):
         return self._field
     def add_to_field(self, new_line):
@@ -278,17 +310,17 @@ class Board(StartingValues):
         self._field = field
     def draw_board(self, screen, color):
         screen.fill(color)
-        for i in range(self.get_height()):
-            for j in range(self.get_width()):
-                pygame.draw.rect(screen, Color().GRAY, [self.get_startX() + self.get_blockSize() * j,
-                                                        self.get_startY() + self.get_blockSize() * i,
-                                                        self.get_blockSize(),
-                                                        self.get_blockSize()], 1)
+        for i in range(self._starting_values.get_height()):
+            for j in range(self._starting_values.get_width()):
+                pygame.draw.rect(screen, Color().GRAY, [self._starting_values.get_startX() + self._starting_values.get_blockSize() * j,
+                                                        self._starting_values.get_startY() + self._starting_values.get_blockSize() * i,
+                                                        self._starting_values.get_blockSize(),
+                                                        self._starting_values.get_blockSize()], 1)
                 if self.get_current_field()[i][j] > 0:
                     pygame.draw.rect(screen, self._color_scheme[self.get_current_field()[i][j]],
-                                     [self.get_startX() + self.get_blockSize() * j + 1,
-                                      self.get_startY() + self.get_blockSize() * i + 1,
-                                      self.get_blockSize() - 2, self.get_blockSize() - 1])
+                                     [self._starting_values.get_startX() + self._starting_values.get_blockSize() * j + 1,
+                                      self._starting_values.get_startY() + self._starting_values.get_blockSize() * i + 1,
+                                      self._starting_values.get_blockSize() - 2, self._starting_values.get_blockSize() - 1])
     def break_lines(self):
         def check_row_filled(current_field, height, width):
             for i in range(1, height):
@@ -306,10 +338,12 @@ class Board(StartingValues):
                 for j in range(width):
                     new_field[k][j] = old_field[k - 1][j]
             return new_field
-        check_row_filled(self.get_current_field(), self.get_height(), self.get_width())
+        check_row_filled(self.get_current_field(), self._starting_values.get_height(), self._starting_values.get_width())
+
+
 class ManipulateFigure(object):
     def __init__(self, current_figure, board):
-        super().__init__()
+        #super().__init__()
         self._current_figure = current_figure
         self._board = board
     def get_current_figure(self):
@@ -321,8 +355,8 @@ class ManipulateFigure(object):
         for i in range(self.get_current_figure().get_blocks_per_figure()):
             for j in range(self.get_current_figure().get_blocks_per_figure()):
                 if i * self.get_current_figure().get_blocks_per_figure() + j in self.get_current_figure().get_figure_shape():
-                    if i + self.get_current_figure().get_shift_y() > self.get_current_board().get_height() - 1 or \
-                            j + self.get_current_figure().get_shift_x() > self.get_current_board().get_width() - 1 or \
+                    if i + self.get_current_figure().get_shift_y() > self.get_current_board().get_starting_values().get_height() - 1 or \
+                            j + self.get_current_figure().get_shift_x() > self.get_current_board().get_starting_values().get_width() - 1 or \
                             j + self.get_current_figure().get_shift_x() < 0 or \
                             self.get_current_board().get_current_field()[
                                 i + self.get_current_figure().get_shift_y()][
@@ -349,9 +383,9 @@ class ManipulateFigure(object):
                         j + self.get_current_figure().get_shift_x()] = self.get_current_figure().get_exact_color()
         self.get_current_board().update_field(new_field)
         self.get_current_board().break_lines()
-        self._current_figure = self.get_current_figure().get_new_figure(self._current_figure.get_color_scheme_name()) 
+        self._current_figure = FactoryClass().create_figure(self.get_current_figure().get_color_scheme_name(), self.get_current_figure().get_blocks_per_figure()) 
         if self.intersects():
-            self.get_current_board().set_state("Gameover")
+            self.get_current_board().get_starting_values().set_state("Gameover")
     def draw_figure(self, screen):
         for i in range(self.get_current_figure().get_blocks_per_figure()):
             for j in range(self.get_current_figure().get_blocks_per_figure()):
@@ -359,12 +393,12 @@ class ManipulateFigure(object):
                 if p in self.get_current_figure().get_figure_shape():
                     pygame.draw.rect(screen, self.get_current_figure().get_color_scheme_name().getColorScheme()[self.get_current_figure().get_exact_color()],
                                      [
-                                         self.get_current_figure().get_startX() + self.get_current_figure().get_blockSize() *
+                                         self.get_current_board().get_starting_values().get_startX() + self.get_current_board().get_starting_values().get_blockSize() *
                                          (j + self.get_current_figure().get_shift_x()) + 1,
-                                         self.get_current_figure().get_startY() + self.get_current_figure().get_blockSize() *
+                                         self.get_current_board().get_starting_values().get_startY() +  self.get_current_board().get_starting_values().get_blockSize() *
                                          (i + self.get_current_figure().get_shift_y()) + 1,
-                                         self.get_current_figure().get_blockSize() - 2,
-                                         self.get_current_figure().get_blockSize() - 2])
+                                          self.get_current_board().get_starting_values().get_blockSize() - 2,
+                                          self.get_current_board().get_starting_values().get_blockSize() - 2])
 class Move(ManipulateFigure):
     def __init__(self, current_figure, board):
         super().__init__(current_figure, board)
@@ -387,7 +421,6 @@ class Move(ManipulateFigure):
             self.get_current_figure().update_shift_x(old_x)
         else:
             self.play_sound.play_side_sound()
-
 
 
 class Pause:
@@ -467,61 +500,45 @@ class StartMenu(object):
         return function_getter()
 
     def display_color_schemes(self):
-        classic_color_button_img = pygame.image.load("button_images/button_classic-colors.png").convert_alpha()
-        rainbow_color_button_img = pygame.image.load("button_images/button_rainbow-colors.png").convert_alpha()
-        autumn_color_button_img = pygame.image.load("button_images/button_autumn-colors.png").convert_alpha()
-        bright_color_button_img = pygame.image.load("button_images/button_bright-colors.png").convert_alpha()
         
         buttons = [
-            Button(10, 10, classic_color_button_img, .7, TraditionalTetrisColors()),
-            Button(10, 75, rainbow_color_button_img, .7, RainbowTetrisColors()),
-            Button(200, 10, autumn_color_button_img, .7, AutumnTetrisColors()),
-            Button(215, 75, bright_color_button_img, .7, BrightTetrisColors())
+            Button(10, 10, "button_images/button_classic-colors.png", .7, TraditionalTetrisColors()),
+            Button(10, 75, "button_images/button_rainbow-colors.png", .7, RainbowTetrisColors()),
+            Button(200, 10, "button_images/button_autumn-colors.png", .7, AutumnTetrisColors()),
+            Button(215, 75, "button_images/button_bright-colors.png", .7, BrightTetrisColors())
         ]
-
         return self.display_options(buttons, 'Pick A Color Scheme', self.set_users_choice_color_scheme, self.get_users_choice_color_scheme, self.screen)
 
         
     def display_figure_selection(self):
-        self.display_color_schemes()
 
-        four_figure_img = pygame.image.load("button_images/button_4_block-figures.png").convert_alpha()
-        five_figure_img = pygame.image.load("button_images/button_5_block-figures.png").convert_alpha()
-        six_figure_img = pygame.image.load("button_images/button_6_block-figures.png").convert_alpha()
-        
+        self.display_color_schemes()
         buttons = [
-            Button(100, 250, four_figure_img, .8, MakeFourBlockFigure(3,0,self.get_users_choice_color_scheme())),
-            Button(100, 325, five_figure_img, .8, MakeFiveBlockFigure(3, 0, self.get_users_choice_color_scheme())),
-            Button(100, 400, six_figure_img, .8, MakeSixBlockFigure(3, 0, self.get_users_choice_color_scheme())),
+            Button(100, 250, "button_images/button_4_block-figures.png", .8, FactoryClass().create_figure(self.get_users_choice_color_scheme(), 4)),
+            Button(100, 325, "button_images/button_5_block-figures.png", .8, FactoryClass().create_figure(self.get_users_choice_color_scheme(), 5)),
+            Button(100, 400, "button_images/button_6_block-figures.png", .8, FactoryClass().create_figure(self.get_users_choice_color_scheme(), 6)),
         ]
-        
         return self.display_options(buttons, 'Which Tetromino Figures?', self.set_users_choice_figures, self.get_users_choice_figures, self.screen)
     
     def display_background_color_options(self):
-        light_pink_button_option_img = pygame.image.load("button_images/button_light-pink.png").convert_alpha()
-        sky_blue_button_option_img = pygame.image.load("button_images/button_sky-blue.png").convert_alpha()
-        mint_button_option_img = pygame.image.load("button_images/button_mint.png").convert_alpha()
-        lavender_button_option_img = pygame.image.load("button_images/button_lavender.png").convert_alpha()
-        white_button_option_img = pygame.image.load("button_images/button_white.png").convert_alpha()
-        black_button_option_img = pygame.image.load("button_images/button_black.png").convert_alpha()
-
+        
         buttons = [
-            Button(10, 0, light_pink_button_option_img, .8, Color().get_light_pink()),
-            Button(10, 65, sky_blue_button_option_img, .8, Color().get_sky_blue()),
-            Button(10, 140, mint_button_option_img, .8, Color().get_mint()),
-            Button(200, 0, lavender_button_option_img, .8, Color().get_lavender()),
-            Button(200, 65, white_button_option_img, .8, Color().WHITE),
-            Button(200, 140, black_button_option_img, .8, Color().BLACK)
+            Button(10, 0, "button_images/button_light-pink.png", .8, Color().get_light_pink()),
+            Button(10, 65, "button_images/button_sky-blue.png", .8, Color().get_sky_blue()),
+            Button(10, 140, "button_images/button_mint.png", .8, Color().get_mint()),
+            Button(200, 0, "button_images/button_lavender.png", .8, Color().get_lavender()),
+            Button(200, 65, "button_images/button_white.png", .8, Color().WHITE),
+            Button(200, 140, "button_images/button_black.png", .8, Color().BLACK)
         ]
-       
         return self.display_options(buttons, 'Pick A Background Color', self.set_background_color, self.get_background_color, self.screen)
     
 
 class Button(object):
-    def __init__(self, x, y, image, scale, set_to_method):
-        width = image.get_width()
-        height = image.get_height()
-        self.image = pygame.transform.scale(image, (int(width * scale), int(height * scale)))
+    def __init__(self, x, y, image_url, scale, set_to_method):
+        self.image = pygame.image.load(image_url).convert_alpha()
+        width = self.image.get_width()
+        height = self.image.get_height()
+        self.image = pygame.transform.scale(self.image, (int(width * scale), int(height * scale)))
         self.rect = self.image.get_rect(topleft=(x, y))
         self.clicked = False
         self.set_to = set_to_method
@@ -672,7 +689,7 @@ class Game:
 
             if not self.paused:
                 if counter % (fps // 2 // self.level) == 0 or self.pressing_down:
-                    if self.board.get_state() == "Start":
+                    if self.board.get_starting_values().get_state() == "Start":
                         self.move.go_down()
 
             self.screen.fill(Color().WHITE)
@@ -686,7 +703,7 @@ class Game:
                 pause_rect.center = (self.screen.get_width() // 2, self.screen.get_height() // 2)
                 self.screen.blit(pause_text, pause_rect)
 
-            if self.board.get_state() == "Gameover":
+            if self.board.get_starting_values().get_state() == "Gameover":
                 self.play_sound.play_gameover_sound()
                 self.game_over = True
                 self.display_game_over()
