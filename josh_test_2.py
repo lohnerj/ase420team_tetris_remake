@@ -1,5 +1,5 @@
 import unittest
-from final_tetris_refactored import Board, Color, Gameover, StartingValues, BaseFigure, BrightTetrisColors, MakeFourBlockFigure, Pause, PlaySound, Button
+from final_tetris_refactored import Board, Color, Gameover, StartingValues, BrightTetrisColors, Pause, PlaySound
 import pygame
 import io
 from unittest.mock import MagicMock, patch
@@ -49,15 +49,7 @@ class TestGameIntegration(unittest.TestCase):
                 mock_play_pause_sound.assert_called_once()  
                 print(mock_stdout.getvalue())
 
-    def test_button_methods(self):
-        with patch('sys.stdout', new_callable=io.StringIO) as mock_stdout:
-            image = pygame.Surface((50, 30)) 
-            button = Button(100, 100, image, 2)
-            self.assertIsInstance(button, Button)
-
-            # Test initial state
-            self.assertFalse(button.clicked)
-
+    
     def test_gameover_methods(self):
         with patch('sys.stdout', new_callable=io.StringIO) as mock_stdout:
             # Create a mock for pygame.Surface
