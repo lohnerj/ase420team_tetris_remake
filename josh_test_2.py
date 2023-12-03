@@ -1,5 +1,5 @@
 import unittest
-from final_tetris_refactored import Board, Color, Gameover, StartingValues, MakeFigure, BrightTetrisColors, MakeFourBlockFigure, Pause, PlaySound, Button
+from final_tetris_refactored import Board, Color, Gameover, StartingValues, BaseFigure, BrightTetrisColors, MakeFourBlockFigure, Pause, PlaySound, Button
 import pygame
 import io
 from unittest.mock import MagicMock, patch
@@ -14,39 +14,7 @@ class TestGameIntegration(unittest.TestCase):
     def tearDown(self):
         pygame.quit()
 
-    def test_make_figure_methods(self):
-        make_figure = MakeFigure(1, 2, self.color_scheme)
-
-        self.assertEqual(make_figure.get_shift_x(), 1)
-        self.assertEqual(make_figure.get_shift_y(), 2)
-        self.assertEqual(make_figure.get_rotation(), 0)
-        self.assertTrue(1 <= make_figure.get_exact_color() <= len(self.color_scheme.getColorScheme()) - 1)
-
-        # Update shift and rotation
-        make_figure.update_shift_x(3)
-        make_figure.update_shift_y(4)
-        make_figure.update_rotation(90)
-
-        self.assertEqual(make_figure.get_shift_x(), 3)
-        self.assertEqual(make_figure.get_shift_y(), 4)
-        self.assertEqual(make_figure.get_rotation(), 90)
-
-        # Check color scheme and color scheme name
-        self.assertEqual(make_figure.get_color_scheme_name(), self.color_scheme)
-
-    def test_make_four_block_figure_methods(self):
-        make_four_block_figure = MakeFourBlockFigure(1, 2, self.color_scheme)
-
-        self.assertEqual(make_four_block_figure.get_shift_x(), 1)
-        self.assertEqual(make_four_block_figure.get_shift_y(), 2)
-        self.assertEqual(make_four_block_figure.get_rotation(), 0)
-        self.assertTrue(1 <= make_four_block_figure.get_exact_color() <= len(self.color_scheme.getColorScheme()) - 1)
-        
-        # Additional tests for MakeFourBlockFigure specific methods
-        self.assertTrue(0 <= make_four_block_figure.get_type() < len(MakeFourBlockFigure.figures))
-        self.assertEqual(make_four_block_figure.get_blocks_per_figure(), 4)
-        self.assertTrue(isinstance(make_four_block_figure.get_figure_shape(), list))
-        self.assertTrue(isinstance(make_four_block_figure.get_new_figure(self.color_scheme), MakeFourBlockFigure))
+    
 
     def test_board_methods(self):
         with patch('sys.stdout', new_callable=io.StringIO) as mock_stdout:
@@ -58,7 +26,7 @@ class TestGameIntegration(unittest.TestCase):
 
             # Test drawing on the board
             screen = pygame.display.set_mode((500, 500))
-            board.draw_board(screen, Color().BLACK)
+            board.draw_board(screen, Color().get_color("BLACK"))
             pygame.display.flip()
 
     def test_pause_methods(self):

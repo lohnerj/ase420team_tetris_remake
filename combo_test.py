@@ -1,7 +1,7 @@
 import unittest
 import pygame
 # Update with your actual module and class names
-from final_tetris_refactored import Board, PlaySound, Color
+from final_tetris_refactored import Board, PlaySound, Color, BrightTetrisColors
 
 
 class TestComboFeature(unittest.TestCase):
@@ -10,13 +10,7 @@ class TestComboFeature(unittest.TestCase):
         pygame.init()
         # Set up any necessary objects or configurations before each test
         # Replace with your color scheme class
-        self.color_scheme = {
-            1: (255, 0, 0),   # Red
-            2: (0, 255, 0),   # Green
-            3: (0, 0, 255),   # Blue
-            # ... add more colors as needed
-        }
-        self.board = Board(self.color_scheme)
+        self.board = Board(color_scheme=BrightTetrisColors())
 
     def test_combo_count_update(self):
         # Ensure combo_count updates correctly when lines are cleared

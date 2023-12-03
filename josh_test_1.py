@@ -14,13 +14,13 @@ class Basic_Tests(unittest.TestCase):
     
     #Regression
     def test_color_methods(self):
-        self.assertEqual(self.color.get_purple(), (120, 37, 179))
-        self.assertEqual(self.color.get_light_blue(), (100, 179, 179))
-        self.assertEqual(self.color.get_brown(), (80, 34, 22))
-        self.assertEqual(self.color.get_light_green(), (80, 134, 22))
-        self.assertEqual(self.color.get_red(), (180, 34, 22))
-        self.assertEqual(self.color.get_pinkish_purple(), (180, 34, 122))
-        self.assertEqual(self.color.get_orange(), (255, 97, 3))
+        self.assertEqual(Color().get_color("PURPLE"), (120, 37, 179))
+        self.assertEqual(Color().get_color("LIGHT_BLUE"), (100, 179, 179))
+        self.assertEqual(Color().get_color("BROWN"), (80, 34, 22))
+        self.assertEqual(Color().get_color("LIGHT_GREEN"), (80, 134, 22))
+        self.assertEqual(Color().get_color("RED"), (180, 34, 22))
+        self.assertEqual(Color().get_color("PINKISH_PURPLE"), (180, 34, 122))
+        self.assertEqual(Color().get_color("ORANGE"), (255, 97, 3))
     #Regression
     def test_starting_values_methods(self):
         self.assertEqual(self.starting_values.get_startX(), 100)

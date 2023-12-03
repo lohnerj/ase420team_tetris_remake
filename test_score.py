@@ -1,19 +1,14 @@
 import unittest
 import pygame
-from final_tetris_refactored import Board
+from final_tetris_refactored import Board, BrightTetrisColors
 
 
 class TestBoard(unittest.TestCase):
 
     def setUp(self):
         pygame.init()
-        self.color_scheme = {
-            1: (255, 0, 0),   # Red
-            2: (0, 255, 0),   # Green
-            3: (0, 0, 255),   # Blue
-            # ... add more colors as needed
-        }
-        self.empty_board = Board(color_scheme=self.color_scheme)
+        self.empty_board = Board(color_scheme=BrightTetrisColors())
+        
 
     def test_score_increment_empty_board(self):
         self.assertEqual(self.empty_board.score, 0)
