@@ -3,7 +3,7 @@ from final_tetris_refactored import Color, StartingValues, BrightTetrisColors
 
 from unittest.mock import patch
 
-class TestColorIntegration(unittest.TestCase):
+class Basic_Tests(unittest.TestCase):
 
     def setUp(self):
         self.color = Color()
