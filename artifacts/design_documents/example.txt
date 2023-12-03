@@ -1,3 +1,0 @@
-1. The problem domain information.
-2. The architecture of your application, including data flow and components.
-3. UML diagrams of each component of your architecture.
