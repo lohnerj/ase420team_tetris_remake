@@ -349,9 +349,9 @@ class Board(object):
                                       self._starting_values.get_startY() + self._starting_values.get_blockSize() * i + 1,
                                       self._starting_values.get_blockSize() - 2, self._starting_values.get_blockSize() - 1])
         font = pygame.font.Font(None, 26)
-        score_text = font.render(f"Score: {self.score}", True, Color.BLACK)
+        score_text = font.render(f"Score: {self.score}", True, Color().get_color("BLACK"))
         level_text = font.render(
-            f"Level: {self.get_level()}", True, Color.BLACK)
+            f"Level: {self.get_level()}", True, Color().get_color("BLACK"))
         screen.blit(score_text, (self._starting_values.get_startX(), 10))
         screen.blit(level_text, (self._starting_values.get_startX(), 30))
 
