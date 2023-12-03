@@ -3,114 +3,96 @@ import pygame
 from abc import ABCMeta, abstractmethod
 
 class Color(object):
-    BLACK = (0, 0, 0)
-    WHITE = (255, 255, 255)
-    GRAY = (128, 128, 128)
     def __init__(self):
-        self._PURPLE = (120, 37, 179)
-        self._LIGHT_BLUE = (100, 179, 179)
-        self._BROWN = (80, 34, 22)
-        self._LIGHT_GREEN = (80, 134, 22)
-        self._RED = (180, 34, 22)
-        self._PINKISH_PURPLE = (180, 34, 122)
-        self._ORANGE = (255, 97, 3)
-        self._YELLOW = (255, 255, 0)
-        self._GREEN = (0,128,0)
-        self._BLUE = (0, 0, 255) 
-        self._RUST_ORANGE = (205, 55, 0)
-        self._MAROON = (128, 0, 0)
-        self._GOLDEN_YELLOW = (205, 173, 0)
-        self._BURNT_SIENNA = (138, 54, 15)
-        self._OLIVE_GREEN = (107, 142, 35)
-        self._DARK_BROWN = (94, 38, 18)
-        self._LIGHT_PINK = (255, 182, 193)
-        self._SKY_BLUE = (135, 206, 235)
-        self._MINT = (189, 252, 201)
-        self._LAVENDER = (205, 193, 197)
-        self._PALE_TURQUOISE = (102, 139, 139)
-        self._PALE_GOLDENROD = (238, 232, 170)
-        self._NEON_GREEN = (57, 255, 20)
-        self._HOT_PINK = (255,105,180)
-        self._NEON_BLUE = (31, 81, 255)
-        self._NEON_ORANGE = (255, 95, 31)
-        self._NEON_YELLOW = ((224,231,34))
-        self._TURQOISE = (0,245,255)
+        self._colors = {
+        "BLACK": (0, 0, 0),
+        "WHITE": (255, 255, 255),
+        "GRAY": (128, 128, 128),
+        "PURPLE": (120, 37, 179),
+        "LIGHT_BLUE": (100, 179, 179),
+        "BROWN": (80, 34, 22),
+        "LIGHT_GREEN": (80, 134, 22),
+        "RED": (180, 34, 22),
+        "PINKISH_PURPLE": (180, 34, 122),
+        "ORANGE": (255, 97, 3),
+        "YELLOW": (255, 255, 0),
+        "GREEN": (0,128,0),
+        "BLUE": (0, 0, 255), 
+        "RUST_ORANGE": (205, 55, 0),
+        "MAROON": (128, 0, 0),
+        "GOLDEN_YELLOW": (205, 173, 0),
+        "BURNT_SIENNA": (138, 54, 15),
+        "OLIVE_GREEN": (107, 142, 35),
+        "DARK_BROWN": (94, 38, 18),
+        "LIGHT_PINK": (255, 182, 193),
+        "SKY_BLUE": (135, 206, 235),
+        "MINT": (189, 252, 201),
+        "LAVENDER": (205, 193, 197),
+        "PALE_TURQUOISE": (102, 139, 139),
+        "PALE_GOLDENROD": (238, 232, 170),
+        "NEON_GREEN": (57, 255, 20),
+        "HOT_PINK": (255,105,180),
+        "NEON_BLUE": (31, 81, 255),
+        "NEON_ORANGE": (255, 95, 31),
+        "NEON_YELLOW": ((224,231,34)),
+        "TURQOISE": (0,245,255),
+        }
 
-    def get_purple(self): return self._PURPLE
-    def get_light_blue(self): return self._LIGHT_BLUE
-    def get_brown(self): return self._BROWN
-    def get_light_green(self): return self._LIGHT_GREEN
-    def get_red(self): return self._RED
-    def get_pinkish_purple(self): return self._PINKISH_PURPLE
-    def get_orange(self): return self._ORANGE
-    def get_yellow(self): return self._YELLOW
-    def get_green(self): return self._GREEN
-    def get_blue(self): return self._BLUE
-    def get_rust_orange(self): return self._RUST_ORANGE
-    def get_maroon(self): return self._MAROON
-    def get_golden_yellow(self): return self._GOLDEN_YELLOW
-    def get_burnt_sienna(self): return self._BURNT_SIENNA
-    def get_olive_green(self): return self._OLIVE_GREEN
-    def get_dark_brown(self): return self._DARK_BROWN
-    def get_light_pink(self): return self._LIGHT_PINK
-    def get_sky_blue(self): return self._SKY_BLUE
-    def get_mint(self): return self._MINT
-    def get_lavender(self): return self._LAVENDER
-    def get_pale_turquoise(self): return self._PALE_TURQUOISE
-    def get_pale_goldenrod(self): return self._PALE_GOLDENROD
-    def get_neon_green(self): return self._NEON_GREEN
-    def get_hot_pink(self): return self._HOT_PINK
-    def get_neon_blue(self): return self._NEON_BLUE
-    def get_neon_orange(self): return self._NEON_ORANGE
-    def get_neon_yellow(self): return self._NEON_YELLOW
-    def get_turqoise(self): return self._TURQOISE
+    def get_color(self, name):
+        return self._colors.get(name)
 
-class TraditionalTetrisColors(object):
+
+class ColorScheme(metaclass=ABCMeta):
+    @abstractmethod
+    def get_colors(self): pass
+       
+
+class TraditionalTetrisColors(ColorScheme):
     def __init__(self):
-        self._colors = (Color().BLACK,
-                        Color().get_purple(), 
-                        Color().get_light_blue(),
-                        Color().get_brown(),
-                        Color().get_light_green(),
-                        Color().get_red(),
-                        Color().get_pinkish_purple())
-    def getColorScheme(self):
+        self._colors = (Color().get_color("BLACK"),
+                        Color().get_color("PURPLE"), 
+                        Color().get_color("LIGHT_BLUE"),
+                        Color().get_color("BROWN"),
+                        Color().get_color("LIGHT_GREEN"),
+                        Color().get_color("RED"),
+                        Color().get_color("PINKISH_PURPLE"))
+    def get_colors(self):
         return self._colors
     
-class RainbowTetrisColors(object):
+class RainbowTetrisColors(ColorScheme):
     def __init__(self):
-        self._colors = (Color().BLACK,
-                        Color().get_red(),
-                        Color().get_orange(),
-                        Color().get_yellow(),
-                        Color().get_green(),
-                        Color().get_blue(),
-                        Color().get_purple())
-    def getColorScheme(self):
+        self._colors = (Color().get_color("BLACK"),
+                        Color().get_color("RED"),
+                        Color().get_color("ORANGE"),
+                        Color().get_color("YELLOW"),
+                        Color().get_color("GREEN"),
+                        Color().get_color("BLUE"),
+                        Color().get_color("PURPLE"))
+    def get_colors(self):
         return self._colors
     
-class AutumnTetrisColors(object):
+class AutumnTetrisColors(ColorScheme):
     def __init__(self):
-        self._colors = (Color().BLACK,
-                        Color().get_rust_orange(),
-                        Color().get_maroon(),
-                        Color().get_golden_yellow(),
-                        Color().get_burnt_sienna(),
-                        Color().get_olive_green(),
-                        Color().get_dark_brown())
-    def getColorScheme(self):
+        self._colors = (Color().get_color("BLACK"),
+                        Color().get_color("RUST_ORANGE"),
+                        Color().get_color("MAROON"),
+                        Color().get_color("GOLDEN_YELLOW),
+                        Color().get_color("BURNT_SIENNA"),
+                        Color().get_color("OLIVE_GREEN"),
+                        Color().get_color("DARK_BROWN"))
+    def get_colors(self):
         return self._colors
     
-class BrightTetrisColors(object):
+class BrightTetrisColors(ColorScheme):
     def __init__(self):
-        self._colors = (Color().BLACK,
-                        Color().get_neon_green(),
-                        Color().get_hot_pink(),
-                        Color().get_neon_blue(),
-                        Color().get_neon_orange(),
-                        Color().get_neon_yellow(),
-                        Color().get_turqoise())
-    def getColorScheme(self):
+        self._colors = (Color().get_color("BLACK"),
+                        Color().get_color("NEON_GREEN"),
+                        Color().get_color("HOT_PINK"),
+                        Color().get_color("NEON_BLUE"),
+                        Color().get_color("NEON_ORANGE"),
+                        Color().get_color("NEON_YELLOW"),
+                        Color().get_color("TURQOISE"))
+    def get_colors(self):
         return self._colors
 
 
@@ -140,8 +122,7 @@ class StartingValues(object):
 
 class BaseFigure(object):
     def __init__(self, shift_x, shift_y, color_scheme):
-        super().__init__()
-        self._exact_color = random.randint(1, len(color_scheme.getColorScheme()) - 1) #!!
+        self._exact_color = random.randint(1, len(color_scheme.get_colors()) - 1) #!!
         self._color_scheme = color_scheme
         self._rotation = 0
         self._shift_x = shift_x
@@ -262,7 +243,7 @@ class MakeSixBlockFigure(BaseFigure):
         return MakeSixBlockFigure(3, 0, color_scheme)
     
 
-class IFactoryClass(metaclass=ABCMeta):
+class FactoryClassInterface(metaclass=ABCMeta):
     @abstractmethod
     def create_figure(self, color_scheme): pass
 
@@ -278,15 +259,15 @@ class FactoryClass(object):
             return None
         
         
-class FourBlockFigureFactory(IFactoryClass):
+class FourBlockFigureFactory(FactoryClassInterface):
     def create_figure(self, color_scheme):
         return MakeFourBlockFigure(3, 0, color_scheme)
     
-class FiveBlockFigureFactory(IFactoryClass):
+class FiveBlockFigureFactory(FactoryClassInterface):
     def create_figure(self, color_scheme):
         return MakeFiveBlockFigure(3, 0, color_scheme)
 
-class SixBlockFigureFactory(IFactoryClass):
+class SixBlockFigureFactory(FactoryClassInterface):
     def create_figure(self, color_scheme):
         return MakeSixBlockFigure(3, 0, color_scheme)
 
@@ -296,7 +277,7 @@ class Board(object):
         self.play_sound = PlaySound()
         self._starting_values = StartingValues()
         self._field = []
-        self._color_scheme = color_scheme.getColorScheme()
+        self._color_scheme = color_scheme.get_colors()
         for i in range(self._starting_values.get_height()):
             new_line = [0] * self._starting_values.get_width()
             self.add_to_field(new_line)
@@ -312,7 +293,7 @@ class Board(object):
         screen.fill(color)
         for i in range(self._starting_values.get_height()):
             for j in range(self._starting_values.get_width()):
-                pygame.draw.rect(screen, Color().GRAY, [self._starting_values.get_startX() + self._starting_values.get_blockSize() * j,
+                pygame.draw.rect(screen, Color().get_color("GRAY"), [self._starting_values.get_startX() + self._starting_values.get_blockSize() * j,
                                                         self._starting_values.get_startY() + self._starting_values.get_blockSize() * i,
                                                         self._starting_values.get_blockSize(),
                                                         self._starting_values.get_blockSize()], 1)
@@ -391,7 +372,7 @@ class ManipulateFigure(object):
             for j in range(self.get_current_figure().get_blocks_per_figure()):
                 p = i * self.get_current_figure().get_blocks_per_figure() + j
                 if p in self.get_current_figure().get_figure_shape():
-                    pygame.draw.rect(screen, self.get_current_figure().get_color_scheme_name().getColorScheme()[self.get_current_figure().get_exact_color()],
+                    pygame.draw.rect(screen, self.get_current_figure().get_color_scheme_name().get_colors()[self.get_current_figure().get_exact_color()],
                                      [
                                          self.get_current_board().get_starting_values().get_startX() + self.get_current_board().get_starting_values().get_blockSize() *
                                          (j + self.get_current_figure().get_shift_x()) + 1,
@@ -478,7 +459,7 @@ class StartMenu(object):
         return self.background_color
     
     def display_options(self, buttons, title, function_setter, function_getter, screen):
-        text = self.font.render(title, True, Color().BLACK)
+        text = self.font.render(title, True, Color().get_color("BLACK"))
         textRect = text.get_rect(topleft=(60,200))
 
         run = True
@@ -523,12 +504,12 @@ class StartMenu(object):
     def display_background_color_options(self):
         
         buttons = [
-            Button(10, 0, "button_images/button_light-pink.png", .8, Color().get_light_pink()),
-            Button(10, 65, "button_images/button_sky-blue.png", .8, Color().get_sky_blue()),
-            Button(10, 140, "button_images/button_mint.png", .8, Color().get_mint()),
-            Button(200, 0, "button_images/button_lavender.png", .8, Color().get_lavender()),
-            Button(200, 65, "button_images/button_white.png", .8, Color().WHITE),
-            Button(200, 140, "button_images/button_black.png", .8, Color().BLACK)
+            Button(10, 0, "button_images/button_light-pink.png", .8, Color().get_color("LIGHT_PINK")),
+            Button(10, 65, "button_images/button_sky-blue.png", .8, Color().get_color("SKY_BLUE")),
+            Button(10, 140, "button_images/button_mint.png", .8, Color().get_color("MINT")),
+            Button(200, 0, "button_images/button_lavender.png", .8, Color().get_color("LAVENDER")),
+            Button(200, 65, "button_images/button_white.png", .8, Color().get_color("WHITE")),
+            Button(200, 140, "button_images/button_black.png", .8, Color().get_color("BLACK"))
         ]
         return self.display_options(buttons, 'Pick A Background Color', self.set_background_color, self.get_background_color, self.screen)
     
@@ -692,13 +673,13 @@ class Game:
                     if self.board.get_starting_values().get_state() == "Start":
                         self.move.go_down()
 
-            self.screen.fill(Color().WHITE)
+            self.screen.fill(Color().get_color("WHITE"))
 
             if not self.paused:
                 self.board.draw_board(self.screen, self.background_color)
                 self.move.draw_figure(self.screen)
             else:
-                pause_text = pause_button.font.render("Paused", True, Color.BLACK)
+                pause_text = pause_button.font.render("Paused", True, Color().get_color("BLACK"))
                 pause_rect = pause_text.get_rect()
                 pause_rect.center = (self.screen.get_width() // 2, self.screen.get_height() // 2)
                 self.screen.blit(pause_text, pause_rect)
@@ -741,10 +722,11 @@ class Game:
         self.play_sound.play_background_sound()
 
 
-class Strategy(object):
-    def execute(self, game): pass
+class Strategy(metaclass=ABCMeta):
+    @abstractmethod
+    def execute(self): pass
 
-class QuitStartegy(Strategy):
+class QuitStrategy(Strategy):
     def execute(self, game):
         game.done = True
 class PauseStrategy(Strategy):
@@ -777,7 +759,7 @@ class Context(object):
             if pause_button.current_button_rect.collidepoint(event.pos):
                 self.set_strategy(PauseStrategy())
         if event.type == pygame.QUIT:
-            self.set_strategy(QuitStartegy())
+            self.set_strategy(QuitStrategy())
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP:
                 if not self.game.paused:
