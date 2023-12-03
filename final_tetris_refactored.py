@@ -2,6 +2,7 @@ import random
 import pygame
 from abc import ABCMeta, abstractmethod
 
+
 class Color(object):
     def __init__(self):
         self._colors = {
@@ -76,7 +77,7 @@ class AutumnTetrisColors(ColorScheme):
         self._colors = (Color().get_color("BLACK"),
                         Color().get_color("RUST_ORANGE"),
                         Color().get_color("MAROON"),
-                        Color().get_color("GOLDEN_YELLOW),
+                        Color().get_color("GOLDEN_YELLOW"),
                         Color().get_color("BURNT_SIENNA"),
                         Color().get_color("OLIVE_GREEN"),
                         Color().get_color("DARK_BROWN"))
@@ -104,18 +105,25 @@ class StartingValues(object):
         self._height = 20
         self._width = 10
         self._state = "Start"
+
     def get_startX(self):
         return self._startX
+
     def get_startY(self):
         return self._startY
+
     def get_blockSize(self):
         return self._blockSize
+
     def get_state(self):
         return self._state
+
     def get_height(self):
         return self._height
+
     def get_width(self):
         return self._width
+
     def set_state(self, state):
         self._state = state
 
@@ -148,8 +156,8 @@ class BaseFigure(object):
 
     def get_exact_color(self):
         return self._exact_color
-        
-    def get_color_scheme_name(self): #!!!
+
+    def get_color_scheme_name(self):  # !!!
         return self._color_scheme
 
 
@@ -179,17 +187,22 @@ class MakeFourBlockFigure(BaseFigure):
         return self.figures[self.get_type()][self.get_rotation()]
 
     def get_new_figure(self, color_scheme):
-        return MakeFourBlockFigure(3, 0, color_scheme) #!!!
+        return MakeFourBlockFigure(3, 0, color_scheme)  # !!!
 
 
 class MakeFiveBlockFigure(BaseFigure):
     figures = (
         [[2, 7, 12, 17, 22], [5, 6, 7, 8, 9]],
-        [[11, 12, 16, 17, 21], [10, 11, 12, 16, 17], [7, 11, 12, 16, 17], [11, 12, 16, 17, 18]],
-        [[2, 7, 12, 17, 18], [14, 13, 12, 11, 16], [1, 2, 7, 12, 17], [11, 12, 13, 14, 9]],
-        [[6, 11, 16, 17, 18], [8, 7, 6, 11, 16], [18, 13, 8, 7, 6], [16, 17, 18, 13, 8]],
-        [[6, 11, 12, 13, 8], [8, 7, 12, 17, 18], [18, 13, 12, 11, 16], [16, 17, 12, 7, 6]],
-        [[6, 7, 8, 12, 17], [7, 12, 17, 11, 10], [7, 12, 17, 18, 16], [7, 12, 17, 13, 14]],
+        [[11, 12, 16, 17, 21], [10, 11, 12, 16, 17], [
+            7, 11, 12, 16, 17], [11, 12, 16, 17, 18]],
+        [[2, 7, 12, 17, 18], [14, 13, 12, 11, 16], [
+            1, 2, 7, 12, 17], [11, 12, 13, 14, 9]],
+        [[6, 11, 16, 17, 18], [8, 7, 6, 11, 16], [
+            18, 13, 8, 7, 6], [16, 17, 18, 13, 8]],
+        [[6, 11, 12, 13, 8], [8, 7, 12, 17, 18], [
+            18, 13, 12, 11, 16], [16, 17, 12, 7, 6]],
+        [[6, 7, 8, 12, 17], [7, 12, 17, 11, 10], [
+            7, 12, 17, 18, 16], [7, 12, 17, 13, 14]],
         [[6, 7, 8, 9, 12], [17, 12, 7, 2, 6], [5, 6, 7, 8, 2], [2, 7, 12, 17, 13]],
     )
 
@@ -210,19 +223,29 @@ class MakeFiveBlockFigure(BaseFigure):
     def get_new_figure(self, color_scheme):
         return MakeFiveBlockFigure(3, 0, color_scheme)
 
+
 class MakeSixBlockFigure(BaseFigure):
     figures = (
-        [[12,13,14,15,16,17], [2,8,14,20,26,32]],
-        [[13,19,20,21,15,9], [15,14,20,26,27,28], [22,16,15,14,20,26],[26,27,21,15,14,13]],
-        [[8,14,20,9,15,21], [16,15,14,22,21,20]],
-        [[6,7,8,9,10,14], [3,9,15,21,27,14], [18,19,20,21,22,14], [1,7,13,19,25,14]],
-        [[12,13,14,15,21,27], [3,9,15,21,20,19], [23,22,21,20,14,8], [32,26,20,14,15,16]],
-        [[13,14,15,16,17,23], [9,15,21,27,33,32], [23,22,21,20,19,13], [27,21,15,9,3,4]],
-        [[7,8,14,20,21,22], [9,15,14,13,19,25], [21,20,14,8,7,6], [19,13,14,15,9,3]],
-        [[7,8,9,14,20,26], [9,15,21,14,13,12], [21,20,19,14,8,2], [19,13,7,14,15,16]],
-        [[14,15,20,21,22,23], [14,15,20,21,26,32], [14,15,20,21,13,12], [14,15,20,21,9,3]],
-        [[9,15,21,27,14,16], [13,14,15,16,9,21], [9,15,21,27,20,22], [14,15,16,17,9,21]],
-        [[13,14,15,16,21,27], [9,15,21,27,20,19], [23,22,21,20,15,9], [27,21,15,9,16,17]],
+        [[12, 13, 14, 15, 16, 17], [2, 8, 14, 20, 26, 32]],
+        [[13, 19, 20, 21, 15, 9], [15, 14, 20, 26, 27, 28], [
+            22, 16, 15, 14, 20, 26], [26, 27, 21, 15, 14, 13]],
+        [[8, 14, 20, 9, 15, 21], [16, 15, 14, 22, 21, 20]],
+        [[6, 7, 8, 9, 10, 14], [3, 9, 15, 21, 27, 14], [
+            18, 19, 20, 21, 22, 14], [1, 7, 13, 19, 25, 14]],
+        [[12, 13, 14, 15, 21, 27], [3, 9, 15, 21, 20, 19], [
+            23, 22, 21, 20, 14, 8], [32, 26, 20, 14, 15, 16]],
+        [[13, 14, 15, 16, 17, 23], [9, 15, 21, 27, 33, 32], [
+            23, 22, 21, 20, 19, 13], [27, 21, 15, 9, 3, 4]],
+        [[7, 8, 14, 20, 21, 22], [9, 15, 14, 13, 19, 25], [
+            21, 20, 14, 8, 7, 6], [19, 13, 14, 15, 9, 3]],
+        [[7, 8, 9, 14, 20, 26], [9, 15, 21, 14, 13, 12], [
+            21, 20, 19, 14, 8, 2], [19, 13, 7, 14, 15, 16]],
+        [[14, 15, 20, 21, 22, 23], [14, 15, 20, 21, 26, 32], [
+            14, 15, 20, 21, 13, 12], [14, 15, 20, 21, 9, 3]],
+        [[9, 15, 21, 27, 14, 16], [13, 14, 15, 16, 9, 21], [
+            9, 15, 21, 27, 20, 22], [14, 15, 16, 17, 9, 21]],
+        [[13, 14, 15, 16, 21, 27], [9, 15, 21, 27, 20, 19], [
+            23, 22, 21, 20, 15, 9], [27, 21, 15, 9, 16, 17]],
     )
 
     def __init__(self, shift_x, shift_y, color_scheme):
@@ -241,11 +264,12 @@ class MakeSixBlockFigure(BaseFigure):
 
     def get_new_figure(self, color_scheme):
         return MakeSixBlockFigure(3, 0, color_scheme)
-    
+
 
 class FactoryClassInterface(metaclass=ABCMeta):
     @abstractmethod
     def create_figure(self, color_scheme): pass
+
 
 class FactoryClass(object):
     def create_figure(self, color_scheme, number_of_blocks_in_figure):
@@ -281,14 +305,36 @@ class Board(object):
         for i in range(self._starting_values.get_height()):
             new_line = [0] * self._starting_values.get_width()
             self.add_to_field(new_line)
+        self.score = 0
+        self._level = 1
+        self.combo_count = 0
+
+    def update_combo(self):
+        self.combo_count += 1
+
+    def reset_combo(self):
+        self.combo_count = 0
+
+    def get_level(self):
+        return self._level
+
+    def update_level(self, score):
+        new_level = score // 500 + 1
+        if new_level > self._level:
+            self._level = new_level
+
     def get_starting_values(self):
         return self._starting_values
+
     def get_current_field(self):
         return self._field
+
     def add_to_field(self, new_line):
         self._field.append(new_line)
+
     def update_field(self, field):
         self._field = field
+
     def draw_board(self, screen, color):
         screen.fill(color)
         for i in range(self._starting_values.get_height()):
@@ -302,7 +348,16 @@ class Board(object):
                                      [self._starting_values.get_startX() + self._starting_values.get_blockSize() * j + 1,
                                       self._starting_values.get_startY() + self._starting_values.get_blockSize() * i + 1,
                                       self._starting_values.get_blockSize() - 2, self._starting_values.get_blockSize() - 1])
+        font = pygame.font.Font(None, 26)
+        score_text = font.render(f"Score: {self.score}", True, Color.BLACK)
+        level_text = font.render(
+            f"Level: {self.get_level()}", True, Color.BLACK)
+        screen.blit(score_text, (self._starting_values.get_startX(), 10))
+        screen.blit(level_text, (self._starting_values.get_startX(), 30))
+
     def break_lines(self):
+        combo_count = 0
+
         def check_row_filled(current_field, height, width):
             for i in range(1, height):
                 zeros = 0
@@ -312,25 +367,38 @@ class Board(object):
                 if zeros == 0:
                     self.play_sound.play_tetris_sound()
                     delete_row(current_field, width, i)
+
         def delete_row(current_field, width, current_row):
+            nonlocal combo_count
             old_field = current_field
             new_field = current_field
             for k in range(current_row, 1, -1):
                 for j in range(width):
                     new_field[k][j] = old_field[k - 1][j]
+            self.score += 100
+            combo_count += 1
+            self.update_combo()
+            if combo_count > 1:
+                self.score += 50 * combo_count
             return new_field
-        check_row_filled(self.get_current_field(), self._starting_values.get_height(), self._starting_values.get_width())
+
+        check_row_filled(self.get_current_field(
+        ), self._starting_values.get_height(), self._starting_values.get_width())
+        self.score += 10
 
 
 class ManipulateFigure(object):
     def __init__(self, current_figure, board):
-        #super().__init__()
+        # super().__init__()
         self._current_figure = current_figure
         self._board = board
+
     def get_current_figure(self):
         return self._current_figure
+
     def get_current_board(self):
         return self._board
+
     def intersects(self):
         intersection = False
         for i in range(self.get_current_figure().get_blocks_per_figure()):
@@ -344,6 +412,7 @@ class ManipulateFigure(object):
                                 j + self.get_current_figure().get_shift_x()] > 0:
                         intersection = True
         return intersection
+
     def rotate(self):
         old_rotation = self.get_current_figure().get_rotation()
         self.get_current_figure().update_rotation(
@@ -354,6 +423,7 @@ class ManipulateFigure(object):
             self.play_sound.play_rotate_sound()
         else:
             self.get_current_figure().update_rotation(old_rotation)
+
     def freeze(self):
         self.play_sound.play_place_sound()
         new_field = self.get_current_board().get_current_field()
@@ -364,9 +434,12 @@ class ManipulateFigure(object):
                         j + self.get_current_figure().get_shift_x()] = self.get_current_figure().get_exact_color()
         self.get_current_board().update_field(new_field)
         self.get_current_board().break_lines()
-        self._current_figure = FactoryClass().create_figure(self.get_current_figure().get_color_scheme_name(), self.get_current_figure().get_blocks_per_figure()) 
+        self._current_figure = FactoryClass().create_figure(self.get_current_figure(
+        ).get_color_scheme_name(), self.get_current_figure().get_blocks_per_figure())
         if self.intersects():
             self.get_current_board().get_starting_values().set_state("Gameover")
+        self.get_current_board().reset_combo()
+
     def draw_figure(self, screen):
         for i in range(self.get_current_figure().get_blocks_per_figure()):
             for j in range(self.get_current_figure().get_blocks_per_figure()):
@@ -376,28 +449,37 @@ class ManipulateFigure(object):
                                      [
                                          self.get_current_board().get_starting_values().get_startX() + self.get_current_board().get_starting_values().get_blockSize() *
                                          (j + self.get_current_figure().get_shift_x()) + 1,
-                                         self.get_current_board().get_starting_values().get_startY() +  self.get_current_board().get_starting_values().get_blockSize() *
+                                         self.get_current_board().get_starting_values().get_startY() + self.get_current_board().get_starting_values().get_blockSize() *
                                          (i + self.get_current_figure().get_shift_y()) + 1,
-                                          self.get_current_board().get_starting_values().get_blockSize() - 2,
-                                          self.get_current_board().get_starting_values().get_blockSize() - 2])
+                        self.get_current_board().get_starting_values().get_blockSize() - 2,
+                        self.get_current_board().get_starting_values().get_blockSize() - 2])
+
+
 class Move(ManipulateFigure):
     def __init__(self, current_figure, board):
         super().__init__(current_figure, board)
         self.play_sound = PlaySound()
+
     def go_space(self):
         while not self.intersects():
-            self.get_current_figure().update_shift_y(self.get_current_figure().get_shift_y() + 1)
-        self.get_current_figure().update_shift_y(self.get_current_figure().get_shift_y() - 1)
+            self.get_current_figure().update_shift_y(
+                self.get_current_figure().get_shift_y() + 1)
+        self.get_current_figure().update_shift_y(
+            self.get_current_figure().get_shift_y() - 1)
         self.freeze()
+
     def go_down(self):
         self.get_current_figure().update_shift_y(
             self.get_current_figure().get_shift_y() + 1)
         if self.intersects():
-            self.get_current_figure().update_shift_y(self.get_current_figure().get_shift_y() - 1)
+            self.get_current_figure().update_shift_y(
+                self.get_current_figure().get_shift_y() - 1)
             self.freeze()
+
     def go_side(self, dx):
         old_x = self.get_current_figure().get_shift_x()
-        self.get_current_figure().update_shift_x(self.get_current_figure().get_shift_x() + dx)
+        self.get_current_figure().update_shift_x(
+            self.get_current_figure().get_shift_x() + dx)
         if self.intersects():
             self.get_current_figure().update_shift_x(old_x)
         else:
@@ -411,10 +493,12 @@ class Pause:
         self.paused = False
         self.play_button_text = self.font.render("\u25B6", True, (0, 0, 0))
         self.play_button_rect = self.play_button_text.get_rect()
-        self.play_button_rect.center = (screen.get_width() // 2, screen.get_height() // 2)
+        self.play_button_rect.center = (
+            screen.get_width() // 2, screen.get_height() // 2)
         self.pause_button_text = self.font.render("||", True, (0, 0, 0))
         self.pause_button_rect = self.pause_button_text.get_rect()
-        self.pause_button_rect.x = (screen.get_width() - self.pause_button_rect.width) - 20
+        self.pause_button_rect.x = (
+            screen.get_width() - self.pause_button_rect.width) - 20
         self.pause_button_rect.y = 15
         self.current_button_text = self.pause_button_text
         self.current_button_rect = self.pause_button_rect
@@ -431,10 +515,11 @@ class Pause:
 
     def is_paused(self):
         return self.paused
-    
+
     def pausedraw(self, screen):
         screen.blit(self.current_button_text, self.current_button_rect)
-    
+
+
 class StartMenu(object):
     def __init__(self):
         self.width = 400
@@ -443,66 +528,79 @@ class StartMenu(object):
         self.users_selected_color_scheme = 0
         self.users_selected_figures = 0
         self.background_color = 0
-        self.font = pygame.font.Font('freesansbold.ttf', 26) #should i change font to the font in the util folder?
+        # should i change font to the font in the util folder?
+        self.font = pygame.font.Font('freesansbold.ttf', 26)
 
     def set_users_choice_color_scheme(self, color_scheme_selected):
         self.users_selected_color_scheme = color_scheme_selected
+
     def get_users_choice_color_scheme(self):
         return self.users_selected_color_scheme
+
     def set_users_choice_figures(self, figure_choice):
         self.users_selected_figures = figure_choice
+
     def get_users_choice_figures(self):
         return self.users_selected_figures
+
     def set_background_color(self, background_color):
         self.background_color = background_color
+
     def get_background_color(self):
         return self.background_color
-    
+
     def display_options(self, buttons, title, function_setter, function_getter, screen):
         text = self.font.render(title, True, Color().get_color("BLACK"))
         textRect = text.get_rect(topleft=(60,200))
 
         run = True
         while run:
-            screen.fill((202,228,241))
+            screen.fill((202, 228, 241))
             screen.blit(text, textRect)
 
             for button in buttons:
                 if button.draw(screen):
-                    function_setter(button.get_method_to_set_to()) #maybe rename this?
+                    # maybe rename this?
+                    function_setter(button.get_method_to_set_to())
                     run = False
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         run = False
 
             pygame.display.flip()
-            
+
         pygame.display.update()
         return function_getter()
 
     def display_color_schemes(self):
-        
+
         buttons = [
-            Button(10, 10, "button_images/button_classic-colors.png", .7, TraditionalTetrisColors()),
-            Button(10, 75, "button_images/button_rainbow-colors.png", .7, RainbowTetrisColors()),
-            Button(200, 10, "button_images/button_autumn-colors.png", .7, AutumnTetrisColors()),
-            Button(215, 75, "button_images/button_bright-colors.png", .7, BrightTetrisColors())
+            Button(10, 10, "button_images/button_classic-colors.png", .7,
+                   TraditionalTetrisColors()),
+            Button(10, 75, "button_images/button_rainbow-colors.png", .7,
+                   RainbowTetrisColors()),
+            Button(200, 10, "button_images/button_autumn-colors.png", .7,
+                   AutumnTetrisColors()),
+            Button(215, 75, "button_images/button_bright-colors.png", .7,
+                   BrightTetrisColors())
         ]
         return self.display_options(buttons, 'Pick A Color Scheme', self.set_users_choice_color_scheme, self.get_users_choice_color_scheme, self.screen)
 
-        
     def display_figure_selection(self):
 
         self.display_color_schemes()
         buttons = [
-            Button(100, 250, "button_images/button_4_block-figures.png", .8, FactoryClass().create_figure(self.get_users_choice_color_scheme(), 4)),
-            Button(100, 325, "button_images/button_5_block-figures.png", .8, FactoryClass().create_figure(self.get_users_choice_color_scheme(), 5)),
-            Button(100, 400, "button_images/button_6_block-figures.png", .8, FactoryClass().create_figure(self.get_users_choice_color_scheme(), 6)),
+            Button(100, 250, "button_images/button_4_block-figures.png", .8,
+                   FactoryClass().create_figure(self.get_users_choice_color_scheme(), 4)),
+            Button(100, 325, "button_images/button_5_block-figures.png", .8,
+                   FactoryClass().create_figure(self.get_users_choice_color_scheme(), 5)),
+            Button(100, 400, "button_images/button_6_block-figures.png", .8,
+                   FactoryClass().create_figure(self.get_users_choice_color_scheme(), 6)),
         ]
         return self.display_options(buttons, 'Which Tetromino Figures?', self.set_users_choice_figures, self.get_users_choice_figures, self.screen)
-    
+
     def display_background_color_options(self):
-        
+
         buttons = [
             Button(10, 0, "button_images/button_light-pink.png", .8, Color().get_color("LIGHT_PINK")),
             Button(10, 65, "button_images/button_sky-blue.png", .8, Color().get_color("SKY_BLUE")),
@@ -512,14 +610,15 @@ class StartMenu(object):
             Button(200, 140, "button_images/button_black.png", .8, Color().get_color("BLACK"))
         ]
         return self.display_options(buttons, 'Pick A Background Color', self.set_background_color, self.get_background_color, self.screen)
-    
+
 
 class Button(object):
     def __init__(self, x, y, image_url, scale, set_to_method):
         self.image = pygame.image.load(image_url).convert_alpha()
         width = self.image.get_width()
         height = self.image.get_height()
-        self.image = pygame.transform.scale(self.image, (int(width * scale), int(height * scale)))
+        self.image = pygame.transform.scale(
+            self.image, (int(width * scale), int(height * scale)))
         self.rect = self.image.get_rect(topleft=(x, y))
         self.clicked = False
         self.set_to = set_to_method
@@ -530,26 +629,26 @@ class Button(object):
     def draw(self, screen):
         action = False
         pos = pygame.mouse.get_pos()
-        
+
         if self.rect.collidepoint(pos):
             if pygame.mouse.get_pressed()[0] == 1 and self.clicked == False:
                 self.clicked = True
                 action = True
-            
+
         screen.blit(self.image, self.rect)
-        return action    
-    
+        return action
+
 
 class PlaySound:
     def __init__(self):
         pygame.mixer.init(44100, -16, 2, 2048)
-        self.background_channel = pygame.mixer.Channel(1) 
-        self.movement_channel = pygame.mixer.Channel(2) 
-        self.tetris_channel = pygame.mixer.Channel(3) 
+        self.background_channel = pygame.mixer.Channel(1)
+        self.movement_channel = pygame.mixer.Channel(2)
+        self.tetris_channel = pygame.mixer.Channel(3)
         self.quiet_sound = 0.2
-        self.background_sound = pygame.mixer.Sound("util/sounds/background_sound.wav")
+        self.background_sound = pygame.mixer.Sound(
+            "util/sounds/background_sound.wav")
         self.background_playing = False
-        
 
     def play_background_sound(self):
         if not self.background_playing:
@@ -568,11 +667,13 @@ class PlaySound:
         self.movement_channel.play(side_sound)
 
     def play_rotate_sound(self):
-        rotate_sound = rotate_sound = pygame.mixer.Sound("util/sounds/rotate_sound.wav")
+        rotate_sound = rotate_sound = pygame.mixer.Sound(
+            "util/sounds/rotate_sound.wav")
         self.movement_channel.play(rotate_sound)
-        
+
     def play_place_sound(self):
-        place_sound = place_sound = pygame.mixer.Sound("util/sounds/place_sound.wav")
+        place_sound = place_sound = pygame.mixer.Sound(
+            "util/sounds/place_sound.wav")
         place_sound.set_volume(self.quiet_sound)
         self.movement_channel.play(place_sound)
 
@@ -599,15 +700,19 @@ class PlaySound:
         gameover_sound.set_volume(self.quiet_sound)
         self.movement_channel.play(gameover_sound)
 
+
 class Gameover:
     def __init__(self, screen):
         self.font = pygame.font.Font(None, 36)
         self.text = self.font.render("Game Over", True, (255, 0, 0))
         self.text_rect = self.text.get_rect()
-        self.text_rect.center = (screen.get_width() // 2, screen.get_height() // 2)
-        self.restart_text = self.font.render("Press R to Restart", True, (0, 0, 0))
+        self.text_rect.center = (screen.get_width() //
+                                 2, screen.get_height() // 2)
+        self.restart_text = self.font.render(
+            "Press R to Restart", True, (0, 0, 0))
         self.restart_rect = self.restart_text.get_rect()
-        self.restart_rect.center = (screen.get_width() // 2, screen.get_height() // 2 + 50)
+        self.restart_rect.center = (
+            screen.get_width() // 2, screen.get_height() // 2 + 50)
 
     def draw(self, screen):
         screen.fill((255, 255, 255))
@@ -656,7 +761,6 @@ class Game:
         self.game_over = False
 
         self.play_sound.play_background_sound()
-        
 
         while not self.done:
             counter += 1
@@ -665,10 +769,12 @@ class Game:
 
             context = Context(self)
             for event in pygame.event.get():
-                
+
                 context.make_decision(event)
 
             if not self.paused:
+                self.board.update_level(self.board.score)
+                fps = 25 + 10 * (self.board.get_level() - 1)
                 if counter % (fps // 2 // self.level) == 0 or self.pressing_down:
                     if self.board.get_starting_values().get_state() == "Start":
                         self.move.go_down()
@@ -681,7 +787,8 @@ class Game:
             else:
                 pause_text = pause_button.font.render("Paused", True, Color().get_color("BLACK"))
                 pause_rect = pause_text.get_rect()
-                pause_rect.center = (self.screen.get_width() // 2, self.screen.get_height() // 2)
+                pause_rect.center = (
+                    self.screen.get_width() // 2, self.screen.get_height() // 2)
                 self.screen.blit(pause_text, pause_rect)
 
             if self.board.get_starting_values().get_state() == "Gameover":
@@ -693,7 +800,6 @@ class Game:
 
             pygame.display.flip()
             clock.tick(fps)
-            
 
     def display_game_over(self):
         while self.game_over:
@@ -711,14 +817,14 @@ class Game:
 
     def reset_game(self):
         startmenu = StartMenu()
-        self.figure = startmenu.display_figure_selection() #added
-        self.board = Board(startmenu.get_users_choice_color_scheme()) #added
+        self.figure = startmenu.display_figure_selection()  # added
+        self.board = Board(startmenu.get_users_choice_color_scheme())  # added
         self.move = Move(self.figure, self.board)
         self.level = 1
         self.paused = False
         self.pressing_down = False
         self.game_over = False
-        self.background_color = startmenu.display_background_color_options() #added
+        self.background_color = startmenu.display_background_color_options()  # added
         self.play_sound.play_background_sound()
 
 
@@ -729,31 +835,46 @@ class Strategy(metaclass=ABCMeta):
 class QuitStrategy(Strategy):
     def execute(self, game):
         game.done = True
+
+
 class PauseStrategy(Strategy):
     def execute(self, game):
         game.toggle_pause()
+
+
 class RotateStrategy(Strategy):
     def execute(self, game):
         game.move.rotate()
+
+
 class GoLeftStrategy(Strategy):
     def execute(self, game):
         game.move.go_side(-1)
+
+
 class GoRightStrategy(Strategy):
     def execute(self, game):
         game.move.go_side(1)
+
+
 class GoDownStrategy(Strategy):
     def execute(self, game):
         game.pressing_down = True
+
+
 class ReleaseGoDownStrategy(Strategy):
     def execute(self, game):
         game.pressing_down = False
+
 
 class Context(object):
     def __init__(self, game):
         self.game = game
         self.strategy = None
+
     def set_strategy(self, strategy):
         self.strategy = strategy
+
     def make_decision(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             if pause_button.current_button_rect.collidepoint(event.pos):
@@ -774,12 +895,14 @@ class Context(object):
                 self.set_strategy(GoDownStrategy())
             if event.key == pygame.K_SPACE:
                 self.set_strategy(PauseStrategy())
-                self.strategy.execute(self.game)  #if strategy isn't  executed in this if statement. It will not pause the screen. There is some kind of odd timing issue that prevents that, hence why i have the execute method in this if statement.
+                # if strategy isn't  executed in this if statement. It will not pause the screen. There is some kind of odd timing issue that prevents that, hence why i have the execute method in this if statement.
+                self.strategy.execute(self.game)
         if event.type == pygame.KEYUP and event.key == pygame.K_DOWN:
             self.set_strategy(ReleaseGoDownStrategy())
 
         if self.strategy:
             self.strategy.execute(self.game)
+
 
 if __name__ == "__main__":
     pygame.init()
