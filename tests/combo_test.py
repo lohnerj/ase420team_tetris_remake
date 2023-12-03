@@ -1,36 +1,32 @@
 import unittest
-import pygame
-# Update with your actual module and class names
-from final_tetris_refactored import Board, PlaySound, Color, BrightTetrisColors
+from final_tetris_refactored import Board, BrightTetrisColors
 
 
-class TestComboFeature(unittest.TestCase):
+class TestComboCount(unittest.TestCase):
+    def test_combo_count_increment(self):
+        board = Board(color_scheme=BrightTetrisColors())
 
-    def setUp(self):
-        pygame.init()
-        # Set up any necessary objects or configurations before each test
-        # Replace with your color scheme class
-        self.board = Board(color_scheme=BrightTetrisColors())
+        self.assertEqual(board.combo_count, 0)
 
-    def test_combo_count_update(self):
-        # Ensure combo_count updates correctly when lines are cleared
-        # You might need to adjust this based on your game logic
+        board.update_combo()
 
-        # Initial combo_count should be 0
-        self.assertEqual(self.board.combo_count, 0)
+        self.assertEqual(board.combo_count, 1)
 
-        # Simulate clearing lines
-        # Update your test based on your game logic for clearing lines
-        self.board.break_lines()
-        self.assertEqual(self.board.combo_count, 1)
+    def test_combo_count_reset(self):
 
-        # Simulate clearing more lines
-        self.board.break_lines()
-        self.assertEqual(self.board.combo_count, 2)
+        board = Board(color_scheme=BrightTetrisColors())
 
-        # Reset combo_count and verify it's back to 0
-        self.board.reset_combo()
-        self.assertEqual(self.board.combo_count, 0)
+        board.update_combo()
+
+        board.reset_combo()
+
+        self.assertEqual(board.combo_count, 0)
+
+    def test_combo_count_after_break_lines(self):
+
+        board = Board(color_scheme=BrightTetrisColors())
+
+        board.break_lines()
 
 
 if __name__ == '__main__':

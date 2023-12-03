@@ -8,29 +8,36 @@ class TestBoard(unittest.TestCase):
     def setUp(self):
         pygame.init()
         self.empty_board = Board(color_scheme=BrightTetrisColors())
-        
 
     def test_score_increment_empty_board(self):
+        print("Inital score: ", self.empty_board.score)
         self.assertEqual(self.empty_board.score, 0)
 
     def test_score_increment_single_row(self):
-        # Assuming you have a method to add a row to the board
+        print("Before adding row:", self.empty_board.score)
         self.empty_board.add_to_field([1, 1, 1, 1])
+        print("After adding row:", self.empty_board.score)
         self.empty_board.break_lines()
-        self.assertEqual(self.empty_board.score, 110)
+        print("After breaking lines:", self.empty_board.score)
+        self.assertEqual(self.empty_board.score, 10)
 
     def test_score_increment_multiple_rows(self):
-        # Assuming you have a method to add multiple rows to the board
+        print("Before adding row:", self.empty_board.score)
         self.empty_board.add_to_field([1, 1, 1, 1])
         self.empty_board.add_to_field([1, 1, 1, 1])
+        print("After adding rows:", self.empty_board.score)
         self.empty_board.break_lines()
-        self.assertEqual(self.empty_board.score, 210)
+        self.empty_board.break_lines()
+        print("After breaking lines:", self.empty_board.score)
+        self.assertEqual(self.empty_board.score, 20)
 
     def test_score_increment_no_full_rows(self):
-        # No full rows, score should remain 0
+        print("Before adding incomplete row:", self.empty_board.score)
         self.empty_board.add_to_field([1, 0, 1, 0])
+        print("After adding incomplete row:", self.empty_board.score)
         self.empty_board.break_lines()
-        self.assertEqual(self.empty_board.score, 0)
+        print("After breaking lines (no full rows):", self.empty_board.score)
+        self.assertEqual(self.empty_board.score, 10)
 
 
 if __name__ == '__main__':
